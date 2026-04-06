@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"]
+    }
+  },
+  "include": [
+    "app/**/*",
+    "components/**/*",
+    "lib/**/*",
+    "config/**/*",
+    "provider.jsx"
+, "@/components/ui/image-ripple.jsx", "@/components/ui/share-button.jsx", "@/components/ui/card-swipe.jsx", "@/components/ui/card-carousel.jsx", "@/components/ui/text-scroll.jsx", "@/components/ui/slide-button.jsx", "@/components/ui/wrap-button.jsx"  ]
+}
