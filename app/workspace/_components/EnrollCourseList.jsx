@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import EnrollCourseCard from "./EnrollCourseCard";
+import { ArrowRight } from "lucide-react";
 
 function EnrollCourseList() {
   const [enrolledCourseList, setEnrollCourseList] = useState([]);
@@ -11,20 +12,26 @@ function EnrollCourseList() {
 
   const GetEnrolledCourse = async () => {
     const result = await axios.get("/api/enroll-course");
-
-    console.log(result.data);
     setEnrollCourseList(result.data);
   };
+
   return (
     enrolledCourseList?.length > 0 && (
-      <div className="mt-3">
-        <div className="mt-16 mb-8">
-          <h2 className="font-bold text-3xl bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent">
-            Continue Learning your course
-          </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-400 dark:to-purple-400 rounded-full mt-3"></div>
+      <section className="space-y-8">
+        <div className="flex justify-between items-center">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-extrabold tracking-tight text-ev-on-surface">
+              Continue Learning
+            </h2>
+            <div className="h-1 w-12 bg-ev-tertiary-fixed rounded-full glow-tertiary"></div>
+          </div>
+          <button className="flex items-center gap-2 text-primary font-bold text-sm hover:translate-x-1 transition-transform">
+            VIEW ALL COURSES{" "}
+            <ArrowRight className="h-4 w-4" />
+          </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {enrolledCourseList?.map((course, index) => (
             <EnrollCourseCard
               course={course?.courses}
@@ -33,7 +40,7 @@ function EnrollCourseList() {
             />
           ))}
         </div>
-      </div>
+      </section>
     )
   );
 }

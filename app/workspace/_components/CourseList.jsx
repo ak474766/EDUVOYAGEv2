@@ -6,6 +6,7 @@ import AddNewCourseDialog from "./AddNewCourseDialog";
 import CourseCard from "./CourseCard";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import { ArrowRight, Plus } from "lucide-react";
 
 function CourseList() {
   const [courseList, setCourseList] = useState([]);
@@ -16,8 +17,6 @@ function CourseList() {
   const GetCourseList = async () => {
     try {
       const result = await axios.get("/api/courses");
-      console.log(result.data);
-      // Ensure we always set an array, even if the API returns a single object
       const data = Array.isArray(result.data) ? result.data : [result.data];
       setCourseList(data);
     } catch (error) {
@@ -26,22 +25,25 @@ function CourseList() {
     }
   };
   return (
-    <div className="mt-10">
-      <div className="mt-16 mb-8 flex items-end justify-between gap-3 flex-wrap">
-        <div>
-          <h2 className="font-bold text-3xl bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent">
-            Course List
+    <section className="space-y-8">
+      <div className="flex justify-between items-center">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-extrabold tracking-tight text-ev-on-surface">
+            Your Courses
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-400 dark:to-purple-400 rounded-full mt-3"></div>
+          <div className="h-1 w-12 bg-ev-tertiary-fixed rounded-full glow-tertiary"></div>
         </div>
-        <AddNewCourseDialog>
-          <Button className="h-10 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm">
-            + Create Course
-          </Button>
-        </AddNewCourseDialog>
+        <div className="flex items-center gap-3">
+          <AddNewCourseDialog>
+            <Button className="h-10 bg-primary text-primary-foreground rounded-full font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all px-5">
+              <Plus className="h-4 w-4 mr-1" /> Create Course
+            </Button>
+          </AddNewCourseDialog>
+        </div>
       </div>
+
       {courseList?.length == 0 ? (
-        <div className="group mt-4 flex flex-col items-center justify-center rounded-2xl border border-border bg-card/60 p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+        <div className="group flex flex-col items-center justify-center rounded-xl bg-ev-surface-container-lowest dark:bg-ev-surface-container p-8 text-center transition-all duration-300 hover:scale-[1.01]">
           <Image
             src={"/online-education.png"}
             alt="edu"
@@ -49,29 +51,27 @@ function CourseList() {
             height={80}
             className="opacity-90 drop-shadow-sm transition-transform duration-500 group-hover:scale-105"
           />
-          <h2 className="my-3 text-lg sm:text-xl font-semibold text-foreground">
-            Look like you havn't created any courses yet
+          <h2 className="my-3 text-lg font-semibold text-ev-on-surface">
+            You haven&apos;t created any courses yet
           </h2>
           <AddNewCourseDialog>
-            <Button className="mt-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm transition-shadow hover:shadow-md">
-              + Create your first course
+            <Button className="mt-2 bg-primary text-primary-foreground rounded-full hover:opacity-90">
+              <Plus className="h-4 w-4 mr-1" /> Create your first course
             </Button>
           </AddNewCourseDialog>
         </div>
       ) : (
-        <div>
-          <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-            {courseList?.map((course, index) => (
-              <CourseCard
-                course={course}
-                key={index}
-                refreshData={GetCourseList}
-              />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {courseList?.map((course, index) => (
+            <CourseCard
+              course={course}
+              key={index}
+              refreshData={GetCourseList}
+            />
+          ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }
 export default CourseList;

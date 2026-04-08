@@ -402,19 +402,19 @@ function ChapterContent({
   }, [isChapterCompleted]);
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-0 md:p-4 max-w-6xl mx-auto space-y-8">
       {/* Chapter Header with enhanced styling */}
-      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-6 mb-8 shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-              <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+      <div className="bg-ev-surface-container-low rounded-[2.5rem] p-6 shadow-sm border-0">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-ev-surface-container-highest rounded-2xl flex-shrink-0">
+              <BookOpen className="h-8 w-8 text-ev-primary" />
             </div>
             <div>
-              <h2 className="font-bold text-2xl tracking-tight text-slate-800 dark:text-slate-200">
+              <h2 className="font-bold text-2xl md:text-3xl tracking-tight text-ev-on-surface mb-1">
                 Chapter {selectedChapterIndex + 1}
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-400 font-medium">
+              <p className="text-lg text-ev-on-surface-variant font-medium">
                 {courseContent?.[selectedChapterIndex]?.CourseData?.chapterName}
               </p>
             </div>
@@ -426,21 +426,20 @@ function ChapterContent({
               onClick={() => markChapterAsCompleted()}
               disabled={loading}
               className="
-                h-12 px-6 rounded-xl inline-flex items-center gap-3
-                bg-gradient-to-r from-emerald-500 to-emerald-600
-                hover:from-emerald-600 hover:to-emerald-700
-                text-white shadow-lg hover:shadow-xl
-                transition-all duration-200 ease-in-out
-                focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2
+                h-14 px-8 rounded-full inline-flex items-center gap-3
+                bg-ev-tertiary-fixed text-[#0f1411] font-bold text-base
+                shadow-[0_0_12px_rgba(188,245,64,0.4)] hover:shadow-[0_0_20px_rgba(188,245,64,0.6)]
+                hover:scale-105 active:scale-95
+                transition-all duration-300 ease-out
                 disabled:opacity-50 disabled:cursor-not-allowed
               "
             >
               {loading ? (
-                <Loader2Icon className="h-5 w-5 animate-spin" />
+                <Loader2Icon className="h-6 w-6 animate-spin" />
               ) : (
-                <CheckCircle className="h-5 w-5" />
+                <CheckCircle className="h-6 w-6" />
               )}
-              <span className="font-medium">
+              <span>
                 {loading ? "Marking..." : "Mark as Completed"}
               </span>
             </Button>
@@ -450,23 +449,21 @@ function ChapterContent({
               onClick={() => markInCompletedChapter()}
               disabled={loading}
               className="
-                h-12 px-6 rounded-xl inline-flex items-center gap-3
-                border-2 border-emerald-200 dark:border-emerald-700
-                bg-emerald-50 dark:bg-emerald-900/20
-                hover:bg-emerald-100 dark:hover:bg-emerald-800/30
-                text-emerald-700 dark:text-emerald-300
-                shadow-lg hover:shadow-xl
-                transition-all duration-200 ease-in-out
-                focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2
+                h-14 px-8 rounded-full inline-flex items-center gap-3
+                border-0 bg-ev-secondary-container text-ev-on-surface
+                hover:bg-ev-surface-container-highest font-bold text-base
+                shadow-sm hover:shadow-md
+                hover:scale-105 active:scale-95
+                transition-all duration-300 ease-out
                 disabled:opacity-50 disabled:cursor-not-allowed
               "
             >
               {loading ? (
-                <Loader2Icon className="h-5 w-5 animate-spin" />
+                <Loader2Icon className="h-6 w-6 animate-spin" />
               ) : (
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               )}
-              <span className="font-medium">
+              <span>
                 {loading ? "Updating..." : "Mark as Incomplete"}
               </span>
             </Button>
@@ -476,30 +473,29 @@ function ChapterContent({
 
       {/* Videos Section with enhanced styling */}
       {videoData && videoData.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-              <Video className="h-5 w-5 text-red-600 dark:text-red-400" />
+        <div>
+          <div className="flex items-center gap-3 mb-6 pl-2">
+            <div className="p-2.5 bg-ev-surface-container rounded-xl">
+              <Video className="h-6 w-6 text-ev-primary" />
             </div>
-            <h2 className="font-bold text-xl tracking-tight text-slate-800 dark:text-slate-200">
+            <h2 className="font-bold text-2xl tracking-tight text-ev-on-surface">
               Related Videos
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videoData?.map(
               (video, index) =>
                 index < 2 && (
                   <div
                     key={index}
                     className="
-                      group rounded-2xl border bg-white/80 dark:bg-slate-800/80 backdrop-blur-md
-                      border-slate-200/60 dark:border-slate-700/60
-                      shadow-lg hover:shadow-xl overflow-hidden transition-all duration-300
-                      hover:scale-[1.02]
+                      group rounded-[2rem] bg-ev-surface-container-low border-0
+                      shadow-sm hover:shadow-md overflow-hidden transition-all duration-300
+                      hover:-translate-y-1
                     "
                   >
-                    <div className="relative aspect-video bg-black/80">
+                    <div className="relative aspect-video bg-black rounded-t-[2rem]">
                       <YouTube
                         videoId={video?.videoId}
                         className="absolute inset-0 h-full w-full"
@@ -513,11 +509,11 @@ function ChapterContent({
                         }}
                       />
                     </div>
-                    <div className="px-6 py-4">
-                      <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 mb-2">
+                    <div className="px-6 py-5">
+                      <h3 className="text-[1.1rem] font-bold text-ev-on-surface line-clamp-2 mb-2">
                         {video?.title || `Video ${index + 1}`}
                       </h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                      <p className="text-sm font-medium text-ev-on-surface-variant uppercase tracking-wider">
                         {video?.channelTitle || "YouTube"}
                       </p>
                     </div>
@@ -529,39 +525,39 @@ function ChapterContent({
       )}
 
       {/* Topics Section with enhanced styling */}
-      <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-6 shadow-lg">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-              <Play className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+      <div className="bg-ev-surface-container-low rounded-[2.5rem] p-6 lg:p-8 shadow-sm border-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-ev-surface-container-highest rounded-xl">
+              <Play className="h-6 w-6 text-ev-primary" />
             </div>
-            <h2 className="font-bold text-xl tracking-tight text-slate-800 dark:text-slate-200">
+            <h2 className="font-bold text-2xl tracking-tight text-ev-on-surface">
               Chapter Topics
             </h2>
           </div>
 
           {/* Enhanced Expand/Collapse Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="sm"
-              className="h-9 px-4 rounded-lg border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+              className="h-10 px-5 rounded-full bg-ev-surface text-ev-on-surface border-0 hover:bg-ev-surface-container-highest font-bold shadow-sm"
               onClick={() => {
                 const next = {};
                 topics?.forEach((_, i) => (next[i] = true));
                 setOpenTopics(next);
               }}
             >
-              <ChevronDown className="h-4 w-4 mr-1" />
+              <ChevronDown className="h-5 w-5 mr-1.5" />
               Expand All
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="h-9 px-4 rounded-lg border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700"
+              className="h-10 px-5 rounded-full bg-ev-surface text-ev-on-surface border-0 hover:bg-ev-surface-container-highest font-bold shadow-sm"
               onClick={() => setOpenTopics({})}
             >
-              <ChevronUp className="h-4 w-4 mr-1" />
+              <ChevronUp className="h-5 w-5 mr-1.5" />
               Collapse All
             </Button>
           </div>
@@ -575,48 +571,35 @@ function ChapterContent({
                 key={index}
                 ref={(el) => (topicRefs.current[index] = el)}
                 className="
-                  rounded-xl border bg-white/60 dark:bg-slate-700/40
-                  border-slate-200/60 dark:border-slate-600/60
-                  shadow-sm hover:shadow-md transition-all duration-200
+                  rounded-3xl bg-ev-surface-container
+                  border-0 shadow-[0_2px_12px_rgba(0,0,0,0.02)]
+                  hover:bg-ev-surface-container-high transition-colors duration-300
                   overflow-hidden
                 "
               >
-                <div className="flex items-start justify-between gap-4 p-6">
-                  <div className="flex items-start gap-4 flex-1">
-                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex-shrink-0">
-                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                <div 
+                  className="flex items-start justify-between gap-4 p-6 cursor-pointer"
+                  onClick={() =>
+                    setOpenTopics((prev) => ({
+                      ...prev,
+                      [index]: !prev?.[index],
+                    }))
+                  }
+                >
+                  <div className="flex items-start gap-5 flex-1">
+                    <div className="h-10 w-10 flex items-center justify-center bg-ev-primary rounded-full flex-shrink-0">
+                      <span className="text-base font-bold text-ev-surface">
                         {index + 1}
                       </span>
                     </div>
-                    <h3 className="font-bold text-lg tracking-tight text-slate-800 dark:text-slate-200 pt-1">
+                    <h3 className="font-bold text-xl tracking-tight text-ev-on-surface mt-1.5">
                       {topic?.topic}
                     </h3>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="
-                      h-10 w-10 rounded-lg text-slate-500 dark:text-slate-400
-                      hover:text-slate-700 dark:hover:text-slate-200
-                      hover:bg-slate-100 dark:hover:bg-slate-600
-                      transition-all duration-200
-                    "
-                    onClick={() =>
-                      setOpenTopics((prev) => ({
-                        ...prev,
-                        [index]: !prev?.[index],
-                      }))
-                    }
-                    aria-expanded={isOpen}
-                    aria-controls={`topic-content-${index}`}
-                  >
-                    {isOpen ? (
-                      <ChevronUp className="h-5 w-5" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5" />
-                    )}
-                  </Button>
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-ev-surface-container-highest text-ev-on-surface-variant flex-shrink-0 mt-0.5">
+                    {isOpen ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                  </div>
                 </div>
 
                 <div
@@ -630,17 +613,18 @@ function ChapterContent({
                     }
                   `}
                 >
-                  <div className="px-6 pb-6">
+                  <div className="px-6 pb-8 pl-[4.5rem]">
                     <div
                       dangerouslySetInnerHTML={{ __html: topic?.content }}
                       style={{ lineHeight: "1.8" }}
                       className="
                         prose prose-slate dark:prose-invert max-w-none
-                        prose-p:my-3 prose-li:my-2 prose-code:px-2 prose-code:py-1
-                        prose-code:bg-slate-100 dark:prose-code:bg-slate-700
-                        prose-code:rounded prose-code:text-sm
-                        prose-headings:text-slate-800 dark:prose-headings:text-slate-200
-                        prose-p:text-slate-700 dark:prose-p:text-slate-300
+                        prose-p:my-4 prose-p:text-[1rem] prose-p:leading-loose
+                        prose-li:my-2 prose-code:px-2 prose-code:py-1
+                        prose-code:bg-ev-surface-container-highest
+                        prose-code:rounded-lg prose-code:text-sm prose-code:font-bold
+                        prose-headings:text-ev-on-surface prose-headings:font-bold
+                        prose-p:text-ev-on-surface-variant
                       "
                     />
                   </div>
@@ -652,14 +636,20 @@ function ChapterContent({
       </div>
 
       {/* Quizzes Section */}
-      <div className="mt-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl border border-slate-200/60 dark:border-slate-700/60 p-6 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-xl tracking-tight text-slate-800 dark:text-slate-200">
-            Quizzes
-          </h2>
-          <div className="flex items-center gap-2">
+      <div className="bg-ev-surface-container-low rounded-[2.5rem] p-6 lg:p-8 shadow-sm border-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-ev-surface-container-highest rounded-xl">
+              <CheckCircle className="h-6 w-6 text-ev-primary" />
+            </div>
+            <h2 className="font-bold text-2xl tracking-tight text-ev-on-surface">
+              Quizzes
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
             {submitted && (
-              <div className="text-sm font-semibold px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
+              <div className="text-sm font-bold px-4 py-2 rounded-full bg-ev-tertiary-container text-ev-on-tertiary-container">
                 Score: {score} / 10
               </div>
             )}
@@ -731,7 +721,11 @@ function ChapterContent({
                   setIssuing(false);
                 }
               }}
-              className="h-9 px-4 rounded-lg"
+              className={`h-10 px-5 rounded-full font-bold transition-all duration-300 ${
+                eligible
+                  ? "bg-ev-primary text-ev-on-primary hover:scale-105 active:scale-95 shadow-sm hover:shadow-md border-0"
+                  : "bg-ev-surface-container text-ev-on-surface-variant cursor-not-allowed border-0"
+              }`}
               title={eligible ? "Generate your certificate" : eligibilityMsg}
             >
               {issuing
@@ -747,16 +741,16 @@ function ChapterContent({
             <Button
               variant="outline"
               size="sm"
-              className="h-9 px-3 rounded-lg border-slate-200 dark:border-slate-600"
+              className="h-10 px-5 rounded-full bg-ev-surface text-ev-on-surface border-0 hover:bg-ev-surface-container-highest font-bold shadow-sm"
               onClick={() => setQuizOpen((v) => !v)}
             >
               {quizOpen ? (
-                <span className="inline-flex items-center gap-1">
-                  <ChevronUp className="h-4 w-4" /> Collapse
+                <span className="inline-flex items-center gap-1.5">
+                  <ChevronUp className="h-5 w-5" /> Collapse
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1">
-                  <ChevronDown className="h-4 w-4" /> Expand
+                <span className="inline-flex items-center gap-1.5">
+                  <ChevronDown className="h-5 w-5" /> Expand
                 </span>
               )}
             </Button>
@@ -788,18 +782,18 @@ function ChapterContent({
                     <div
                       key={qi}
                       ref={(el) => (questionRefs.current[qi] = el)}
-                      className={`rounded-xl border p-4 ${
+                      className={`rounded-3xl border-0 p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] transition-colors duration-300 ${
                         isCorrect
-                          ? "border-emerald-300 bg-emerald-50/60 dark:bg-emerald-900/20"
+                          ? "bg-ev-tertiary-container text-ev-on-tertiary-container"
                           : isWrong
-                          ? "border-rose-300 bg-rose-50/60 dark:bg-rose-900/20"
-                          : "border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-700/40"
+                          ? "bg-rose-500/10 text-ev-on-surface"
+                          : "bg-ev-surface-container"
                       }`}
                     >
-                      <div className="font-semibold mb-3 text-slate-800 dark:text-slate-200">
+                      <div className="font-bold text-lg mb-5 text-ev-on-surface">
                         {qi + 1}. {q.question}
                       </div>
-                      <div className="grid gap-2">
+                      <div className="grid gap-3">
                         {q.options.map((opt, oi) => {
                           const selected = userAns === oi;
                           const showCorrect =
@@ -809,25 +803,34 @@ function ChapterContent({
                           return (
                             <label
                               key={oi}
-                              className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
+                              className={`flex items-center gap-4 p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                                 selected
-                                  ? "border-blue-400 bg-blue-50/60 dark:bg-blue-900/20"
-                                  : "border-slate-200 dark:border-slate-600"
-                              } ${showCorrect ? "!border-emerald-400" : ""} ${
-                                showWrong ? "!border-rose-400" : ""
+                                  ? "border-ev-primary bg-ev-surface-container-highest"
+                                  : "border-transparent bg-ev-surface-container-high hover:bg-ev-surface-container-highest"
+                              } ${showCorrect ? "!border-emerald-500/50 !bg-emerald-500/10" : ""} ${
+                                showWrong ? "!border-rose-500/50 !bg-rose-500/10" : ""
                               }`}
                             >
+                              <div
+                                className={`h-5 w-5 rounded-full flex-shrink-0 flex items-center justify-center transition-all ${
+                                  selected
+                                    ? "bg-ev-primary border-0"
+                                    : "border-2 border-ev-on-surface-variant bg-transparent"
+                                }`}
+                              >
+                                {selected && <div className="h-2 w-2 rounded-full bg-ev-surface" />}
+                              </div>
                               <input
                                 type="radio"
                                 name={`q-${qi}`}
-                                className="h-4 w-4"
+                                className="hidden"
                                 disabled={submitted}
                                 checked={selected || false}
                                 onChange={() =>
                                   setAnswers((prev) => ({ ...prev, [qi]: oi }))
                                 }
                               />
-                              <span className="text-sm text-slate-700 dark:text-slate-300">
+                              <span className="text-[1.05rem] font-medium text-ev-on-surface">
                                 {opt}
                               </span>
                             </label>
@@ -836,29 +839,28 @@ function ChapterContent({
                       </div>
                       {submitted && (
                         <div
-                          className={`mt-4 rounded-xl border p-4 transition-colors ${
+                          className={`mt-6 rounded-2xl border-0 p-5 transition-colors ${
                             isCorrect
-                              ? "border-emerald-300 bg-emerald-50/60 dark:bg-emerald-900/10"
-                              : "border-rose-300 bg-rose-50/60 dark:bg-rose-900/10"
+                              ? "bg-ev-surface-container-high"
+                              : "bg-rose-500/5"
                           }`}
-                          style={{
-                            boxShadow: isCorrect
-                              ? "0 1px 0 rgba(16,185,129,0.15)"
-                              : "0 1px 0 rgba(244,63,94,0.15)",
-                          }}
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
                               {isCorrect ? (
-                                <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                                <div className="p-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg">
+                                  <CheckCircle className="h-6 w-6" />
+                                </div>
                               ) : (
-                                <X className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                                <div className="p-1.5 bg-rose-500/20 text-rose-400 rounded-lg">
+                                  <X className="h-6 w-6" />
+                                </div>
                               )}
                               <span
-                                className={`text-sm font-semibold ${
+                                className={`text-base font-bold tracking-wide uppercase ${
                                   isCorrect
-                                    ? "text-emerald-800 dark:text-emerald-300"
-                                    : "text-rose-800 dark:text-rose-300"
+                                    ? "text-emerald-500"
+                                    : "text-rose-500"
                                 }`}
                               >
                                 {isCorrect
@@ -867,13 +869,13 @@ function ChapterContent({
                               </span>
                             </div>
                             {!isCorrect && (
-                              <span className="text-xs font-semibold rounded-full px-3 py-1 bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200 border border-rose-200/70 dark:border-rose-800/50">
+                              <span className="text-sm font-bold rounded-full px-4 py-1.5 bg-ev-surface-container-highest text-ev-on-surface">
                                 Correct: {q.options[q.correctIndex]}
                               </span>
                             )}
                           </div>
 
-                          <div className="mt-3 text-[13.5px] leading-7 text-slate-700 dark:text-slate-300">
+                          <div className="text-[1rem] leading-relaxed text-ev-on-surface-variant font-medium">
                             {q.explanation}
                           </div>
                         </div>
@@ -883,7 +885,7 @@ function ChapterContent({
                 })}
               </div>
               {!submitted && (
-                <div className="mt-6">
+                <div className="mt-8 flex justify-end">
                   <Button
                     onClick={async () => {
                       // Ensure all answered
@@ -922,7 +924,14 @@ function ChapterContent({
                         console.error(e);
                       }
                     }}
-                    className="h-11 px-6 rounded-xl"
+                    className="
+                      h-12 px-8 rounded-full inline-flex items-center gap-3
+                      bg-ev-primary text-ev-on-primary font-bold text-base
+                      shadow-sm hover:shadow-md
+                      hover:scale-105 active:scale-95
+                      transition-all duration-300 ease-out
+                      border-0
+                    "
                   >
                     Submit Answers
                   </Button>

@@ -23,7 +23,7 @@ export async function POST(req) {
 
     const promises = courseJson?.chapters?.map(async (chapter) => {
       const config = {};
-      const model = "gemini-2.0-flash";
+      const model = "gemini-2.5-flash-lite";
       const contents = [
         {
           role: "user",

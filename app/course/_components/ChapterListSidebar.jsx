@@ -169,31 +169,29 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
       {/* Enhanced Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`mt-20
+        className={`mt-[88px]
           fixed top-6 z-50 p-3 rounded-full 
-          bg-white/90 dark:bg-slate-800/90 backdrop-blur-md
-          border border-slate-200/60 dark:border-slate-600/60 
-          shadow-lg hover:shadow-xl
+          bg-ev-surface-container-highest
+          shadow-lg hover:shadow-xl hover:scale-105 active:scale-95
           transition-all duration-300 ease-in-out
-          hover:bg-white dark:hover:bg-slate-800
+          text-ev-on-surface
           ${isSidebarOpen ? "left-[370px]" : "left-6"}
         `}
         title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
       >
         {isSidebarOpen ? (
-          <ChevronLeft className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+          <ChevronLeft className="h-5 w-5" />
         ) : (
-          <ChevronRight className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+          <ChevronRight className="h-5 w-5" />
         )}
       </button>
 
       {/* Enhanced Sidebar */}
       <div
-        className={`mt-20
-          fixed top-0 left-0 h-screen
-          bg-white/95 dark:bg-slate-900/95 backdrop-blur-md
-          border-r border-slate-200/60 dark:border-slate-700/60
-          shadow-xl
+        className={`mt-[88px]
+          fixed top-0 left-0 h-[calc(100vh-88px)]
+          bg-ev-surface-container-low
+          shadow-[4px_0_24px_rgba(0,0,0,0.02)]
           overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out z-40
           ${
             isSidebarOpen
@@ -203,28 +201,28 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
         `}
       >
         {/* Sidebar Header */}
-        <div className="sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60 p-6 pb-4">
+        <div className="sticky top-0 bg-ev-surface-container-low z-10 p-6 pb-4">
           <div className="flex items-center gap-3 mb-2">
-            <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            <h2 className="font-bold text-xl tracking-tight text-slate-800 dark:text-slate-200">
+            <BookOpen className="h-6 w-6 text-ev-primary" />
+            <h2 className="font-bold text-xl tracking-tight text-ev-on-surface">
               Course Chapters
             </h2>
           </div>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-ev-on-surface-variant font-medium">
             {courseContent?.length} chapters available
           </p>
-          <div className="mt-3">
+          <div className="mt-4">
             {!quizGenerated ? (
               <button
                 onClick={handleGenerateQuiz}
-                className={`w-full px-3 py-2 rounded-lg text-sm font-medium border transition-colors bg-blue-600 text-white border-blue-600 hover:bg-blue-700`}
+                className={`w-full px-4 py-3 rounded-full text-base font-bold transition-all bg-ev-primary text-ev-surface hover:bg-ev-primary/90 hover:shadow-md hover:scale-[1.02] active:scale-95`}
                 title="Generate 10-question quiz"
               >
                 Generate Quiz
               </button>
             ) : (
-              <div>
-                <div className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+              <div className="bg-ev-surface-container rounded-2xl p-4">
+                <div className="text-sm font-bold text-ev-on-surface-variant mb-3">
                   Jump to question
                 </div>
                 <div className="grid grid-cols-5 gap-2">
@@ -235,10 +233,10 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
                       : undefined; // true, false, or undefined
                     const colorClasses =
                       state === true
-                        ? "border-emerald-400 bg-emerald-50/70 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200"
+                        ? "bg-ev-secondary-container text-ev-on-surface"
                         : state === false
-                        ? "border-rose-400 bg-rose-50/70 text-rose-800 dark:border-rose-700 dark:bg-rose-900/30 dark:text-rose-200"
-                        : "border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700";
+                        ? "bg-ev-error-container text-ev-on-surface font-bold"
+                        : "bg-ev-surface-container-highest text-ev-on-surface hover:bg-ev-outline-variant/30";
                     const title =
                       state === true
                         ? `Question ${i + 1}: Correct`
@@ -255,7 +253,7 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
                             })
                           )
                         }
-                        className={`py-2 rounded-lg border text-sm font-semibold transition-colors ${colorClasses}`}
+                        className={`py-2 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 ${colorClasses}`}
                         title={title}
                       >
                         {i + 1}
@@ -269,8 +267,8 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
         </div>
 
         {/* Chapters List */}
-        <div className="p-6 pt-4">
-          <Accordion type="single" collapsible className="space-y-3">
+        <div className="p-6 pt-0">
+          <Accordion type="single" collapsible className="space-y-4">
             {courseContent?.map((chapter, index) => {
               const chapterCompleted = isChapterCompleted(index);
               const isSelected = selectedChapterIndex === index;
@@ -281,49 +279,41 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
                   key={index}
                   onClick={() => setSelectedChapterIndex(index)}
                   className={`
-                    w-full rounded-xl border transition-all duration-200 overflow-hidden box-border
+                    w-full rounded-3xl border-0 transition-all duration-300 overflow-hidden box-border
+                    bg-ev-surface-container 
                     ${
                       chapterCompleted
-                        ? "bg-emerald-50/80 dark:bg-emerald-900/20 border-emerald-200/60 dark:border-emerald-700/60"
-                        : "bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-600/60"
+                        ? "bg-ev-secondary-container text-ev-on-surface"
+                        : isSelected
+                        ? "bg-ev-surface-container-highest shadow-sm scale-[1.02]"
+                        : "hover:bg-ev-surface-container-highest hover:scale-[1.01]"
                     }
-                    ${
-                      isSelected
-                        ? "ring-2 ring-blue-500/50 dark:ring-blue-400/50 shadow-md"
-                        : "hover:shadow-md"
-                    }
-                    data-[state=open]:bg-white dark:data-[state=open]:bg-slate-800
                   `}
                 >
                   <AccordionTrigger
                     className={`
-                      w-full text-base font-medium px-4 py-4 rounded-xl
-                      transition-all duration-200 focus-visible:outline-none
-                      focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
+                      w-full text-base font-bold px-5 py-5 rounded-3xl
+                      transition-all duration-300 focus-visible:outline-none
                       justify-between hover:no-underline
-                      [&>svg]:transition-transform [&>svg]:duration-200
+                      [&>svg]:transition-transform [&>svg]:duration-300
                       data-[state=open]:[&>svg]:rotate-180
-                      ${
-                        chapterCompleted
-                          ? "bg-emerald-100/80 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-200 border-emerald-300/60 dark:border-emerald-600/60 hover:bg-emerald-200/80 dark:hover:bg-emerald-700/40"
-                          : "hover:bg-slate-100/80 dark:hover:bg-slate-700/40 text-slate-700 dark:text-slate-300"
-                      }
+                      text-ev-on-surface
                     `}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       {chapterCompleted ? (
-                        <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                        <CheckCircle className="h-6 w-6 text-ev-primary flex-shrink-0" />
                       ) : (
-                        <PlayCircle className="h-5 w-5 text-slate-400 dark:text-slate-500 flex-shrink-0" />
+                        <PlayCircle className="h-6 w-6 text-ev-outline-variant flex-shrink-0" />
                       )}
-                      <span className="truncate font-medium">
+                      <span className="truncate font-bold leading-tight text-left">
                         {index + 1}. {chapter?.CourseData?.chapterName}
                       </span>
                     </div>
                   </AccordionTrigger>
 
                   <AccordionContent asChild>
-                    <div className="px-3 pb-3">
+                    <div className="px-2 pb-4">
                       {chapter?.CourseData?.topics.map((topic, topicIndex) => {
                         const topicCompleted = isTopicCompleted(
                           index,
@@ -335,25 +325,25 @@ function ChapterListSidebar({ courseInfo, onTopicClick, updateTrigger }) {
                             key={topicIndex}
                             onClick={() => handleTopicClick(index, topicIndex)}
                             className={`
-                              p-3 my-2 rounded-lg text-sm cursor-pointer
-                              border transition-all duration-200
-                              relative pl-4 hover:scale-[1.02] hover:shadow-sm
-                              before:absolute before:left-2 before:top-1/2 before:-translate-y-1/2
-                              before:h-2 before:w-2 before:rounded-full
+                              px-4 py-3 my-1 rounded-2xl text-sm cursor-pointer
+                              transition-all duration-300
+                              relative pl-8 hover:scale-[1.02]
+                              before:absolute before:left-4 before:top-1/2 before:-translate-y-1/2
+                              before:h-1.5 before:w-1.5 before:rounded-full
                               ${
                                 topicCompleted
-                                  ? "bg-emerald-100/80 dark:bg-emerald-800/30 text-emerald-800 dark:text-emerald-200 border-emerald-300/60 dark:border-emerald-600/60 before:bg-emerald-600 dark:before:bg-emerald-400 shadow-sm"
-                                  : "bg-white/80 dark:bg-slate-700/40 text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-600/40 border-slate-200/60 dark:border-slate-600/60 before:bg-slate-400 dark:before:bg-slate-500"
+                                  ? "bg-ev-surface-container-highest text-ev-on-surface font-semibold before:bg-ev-primary shadow-sm"
+                                  : "text-ev-on-surface-variant hover:bg-ev-surface hover:text-ev-on-surface before:bg-ev-outline-variant"
                               }
                             `}
                             title={topic?.topic}
                           >
                             <div className="flex items-center justify-between gap-2 min-w-0">
-                              <span className="truncate break-words font-medium">
+                              <span className="truncate break-words">
                                 {topic?.topic}
                               </span>
                               {topicCompleted && (
-                                <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                                <CheckCircle className="h-4 w-4 text-ev-primary flex-shrink-0" />
                               )}
                             </div>
                           </div>

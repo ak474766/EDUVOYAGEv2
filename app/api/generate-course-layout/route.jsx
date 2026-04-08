@@ -8,7 +8,7 @@ import { ai } from "../../../lib/ai";
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { clerkClient } from "@clerk/nextjs/server";
-const PROMPT = `generate Learning Course depends on following details. In which Make sure to add Course Name, Description,Course Banner Image Prompt (Create a modern, flat-style 2D digital illustration representing user Topic. Include UI/UX elements such as mockup screens, text blocks, icons, buttons, and creative workspace tools. Add symbolic elements related to user Course, like sticky notes, design components, and visual aids. Use a vibrant color palette (blues, purples, oranges) with a clean, professional look. The illustration should feel creative, tech-savvy, and educational, ideal for visualizing concepts in user Course) for Course Banner in 3d format Chapter Name, , Topic under each chapters , Duration for each chapters etc, in JSON format only
+const PROMPT = `generate Learning Course depends on following details. In which Make sure to add Course Name, Description,Course Banner Image Prompt (Create a modern, flat-style 2D digital illustration representing user Topic. Include UI/UX elements such as mockup screens, text blocks, icons, buttons, and creative workspace tools. Add symbolic elements related to user Course, like sticky notes, design components, and visual aids. Use a vibrant color palette (The palette is rooted in nature, using desaturated greens for stability and vibrant neon for "pulse" points) with a clean, professional look. The illustration should feel creative, tech-savvy, and educational, ideal for visualizing concepts in user Course) for Course Banner in 3d format Chapter Name, , Topic under each chapters , Duration for each chapters etc, in JSON format only
 
 Schema:
 
@@ -55,7 +55,8 @@ export async function POST(req) {
   let isSubscribed = false;
   try {
     if (user && user.id) {
-      const userSubscriptions = await clerkClient.users.getUser(user.id);
+      const client = await clerkClient();
+      const userSubscriptions = await client.users.getUser(user.id);
       if (
         userSubscriptions.publicMetadata?.subscriptionId ||
         userSubscriptions.privateMetadata?.subscriptionStatus === "active"
@@ -105,7 +106,7 @@ export async function POST(req) {
   const config = {
     responseMimeType: "text/plain",
   };
-  const model = "gemini-2.0-flash";
+  const model = "gemini-2.5-flash-lite";
   const contents = [
     {
       role: "user",

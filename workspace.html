@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduVoyage Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#0c1f13",
+                        "on-secondary-fixed": "#0a2011",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#516855",
+                        "surface-variant": "#e1e3df",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f8faf6",
+                        "secondary-fixed": "#cfe9d1",
+                        "primary-container": "#91a795",
+                        "on-background": "#191c1a",
+                        "inverse-on-surface": "#eff1ed",
+                        "surface-container-highest": "#e1e3df",
+                        "on-surface": "#191c1a",
+                        "primary-fixed": "#d1e8d5",
+                        "tertiary-container": "#81b100",
+                        "on-tertiary-container": "#2b3e00",
+                        "error-container": "#ffdad6",
+                        "outline": "#737972",
+                        "on-secondary-fixed-variant": "#354c3a",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#bcf540",
+                        "on-tertiary-fixed": "#141f00",
+                        "inverse-surface": "#2e312f",
+                        "secondary-container": "#cce6ce",
+                        "surface-dim": "#d8dbd7",
+                        "tertiary-fixed-dim": "#a1d820",
+                        "surface-tint": "#4e6354",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#b3cdb6",
+                        "primary": "#4e6354",
+                        "on-primary-fixed-variant": "#374b3d",
+                        "error": "#ba1a1a",
+                        "surface": "#f8faf6",
+                        "on-tertiary-fixed-variant": "#374e00",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#434842",
+                        "outline-variant": "#c3c8c0",
+                        "surface-container-high": "#e7e9e5",
+                        "primary-fixed-dim": "#b5ccb9",
+                        "surface-container-low": "#f2f4f0",
+                        "inverse-primary": "#b5ccb9",
+                        "tertiary": "#4a6700",
+                        "secondary": "#4d6451",
+                        "on-primary-container": "#293d2f",
+                        "background": "#f8faf6",
+                        "surface-container": "#eceeea"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; background-color: #f8faf6; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glow-tertiary { box-shadow: 0 0 12px 0 rgba(188, 245, 64, 0.4); }
+        .glass-panel { background: rgba(236, 238, 234, 0.8); backdrop-filter: blur(24px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-on-surface bg-surface antialiased overflow-x-hidden">
+<!-- SideNavBar (from JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-6 h-screen w-64 border-r-0 bg-[#f8faf6] dark:bg-[#191c1a] font-manrope font-medium tracking-tight z-50">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forest</span>
+</div>
+<div>
+<h1 class="text-2xl font-bold text-[#4e6354] dark:text-[#eceeea]">EduVoyage</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-outline">Growth Mindset</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-300 text-[#4e6354] dark:text-[#bcf540] font-bold border-r-4 border-[#4e6354] dark:border-[#bcf540] hover:bg-[#eceeea] scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-300 text-[#434842] dark:text-[#c3c8c0] opacity-70 hover:bg-[#eceeea] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span>My Courses</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-300 text-[#434842] dark:text-[#c3c8c0] opacity-70 hover:bg-[#eceeea] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">local_library</span>
+<span>Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-300 text-[#434842] dark:text-[#c3c8c0] opacity-70 hover:bg-[#eceeea] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">military_tech</span>
+<span>Achievements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-300 text-[#434842] dark:text-[#c3c8c0] opacity-70 hover:bg-[#eceeea] transition-all duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-4">
+<button class="w-full py-4 bg-primary text-on-primary rounded-full font-bold tracking-tight hover:opacity-90 transition-all">
+                Upgrade to Pro
+            </button>
+<div class="pt-6 border-t border-outline-variant/20 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-sm text-[#434842] opacity-70 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-sm text-[#434842] opacity-70 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar (from JSON) -->
+<header class="flex justify-between items-center w-full px-8 py-4 bg-[#f8faf6]/80 dark:bg-[#191c1a]/80 backdrop-blur-3xl sticky top-0 z-40">
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-6 py-3 bg-surface-container-high border-none rounded-full text-xs font-label tracking-widest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="SEARCH FOR COURSES..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-8">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-tertiary-fixed rounded-full glow-tertiary border-2 border-surface"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">dark_mode</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant/20">
+<div class="text-right">
+<p class="text-xs font-bold tracking-tight">Armaan Khan</p>
+<p class="text-[10px] text-outline tracking-wider uppercase">Free Learner</p>
+</div>
+<img alt="User Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="Close-up portrait of a young man with a friendly expression, soft natural sunlight, professional headshot style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDftvWytnhfWCPPnJGIvP4tErt--GKAVvlZ5S1ZfcmN5IIbeMEWJs-wJ2atkAyi1MP7qs62YdSnMCTT4_QA9WG3uBNXtpL2We-w-qusjHFk4kvYhbYCLkVnXKeNu_FKFaeCqptclz_fzrrUMlZZxN3B9lwBaMvZH6sKkvOMIhoK2_ogKFMqRQ1_huR1KA9yQIkiBJDCH9fdOmJZSQO0TPzfLmWIPGhZbFnMahF2eAf6uRN1TU6NPry5cBbMOpczk_DUy5QBJDSXnTB2"/>
+</div>
+</div>
+</header>
+<div class="px-8 pb-12 space-y-12 max-w-[1400px] mx-auto">
+<!-- Hero Section -->
+<section class="relative mt-8 rounded-xl overflow-hidden p-10 bg-gradient-to-br from-primary/10 via-surface-container to-secondary-container/20">
+<div class="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
+<div class="space-y-4">
+<div class="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container-lowest text-primary text-[10px] font-bold tracking-[0.15em] uppercase">
+                            WELCOME BACK
+                        </div>
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">Welcome to EduVoyage, <span class="text-primary">Armaan Khan</span></h1>
+<p class="text-on-surface-variant max-w-lg leading-relaxed">Your journey through the digital grove continues. You have made significant progress this week. Keep the momentum alive.</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<div class="px-6 py-3 rounded-full bg-surface-container-lowest flex items-center gap-3 group hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform">workspace_premium</span>
+<span class="text-sm font-bold tracking-tight">Free Member</span>
+</div>
+<div class="px-6 py-3 rounded-full bg-surface-container-lowest flex items-center gap-3 group hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary">auto_stories</span>
+<span class="text-sm font-bold tracking-tight">5 Courses Created</span>
+</div>
+<div class="px-6 py-3 rounded-full bg-primary text-on-primary flex items-center gap-3 group hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-tertiary-fixed">bolt</span>
+<span class="text-sm font-bold tracking-tight">0 Left</span>
+</div>
+</div>
+</div>
+<!-- Decorative SVG Paths -->
+<svg class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none" fill="none" viewbox="0 0 400 400">
+<path d="M400 0C300 100 100 0 0 100S200 400 400 300" stroke="#4e6354" stroke-width="2"></path>
+</svg>
+</section>
+<!-- Alert/Notice Section -->
+<section class="bg-surface-container-low rounded-lg p-6 flex items-center justify-between gap-6">
+<div class="flex items-center gap-5">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined">report</span>
+</div>
+<div>
+<h3 class="font-bold tracking-tight text-on-surface">Course Limit Reached</h3>
+<p class="text-sm text-on-surface-variant">You've reached the maximum number of courses for the Free tier. Upgrade to Pro for unlimited learning.</p>
+</div>
+</div>
+<button class="px-6 py-3 bg-surface-container-highest hover:bg-surface-variant transition-colors rounded-full text-sm font-bold tracking-tight">
+                    Review Plans
+                </button>
+</section>
+<!-- Continue Learning Section -->
+<section class="space-y-8">
+<div class="flex justify-between items-center">
+<div class="space-y-1">
+<h2 class="text-2xl font-extrabold tracking-tight">Continue Learning</h2>
+<div class="h-1 w-12 bg-tertiary-fixed rounded-full glow-tertiary"></div>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold text-sm hover:translate-x-1 transition-transform">
+                        VIEW ALL COURSES <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Course Card 1 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-500">
+<div class="aspect-[4/3] overflow-hidden relative">
+<img alt="Nature Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Lush green ferns in a misty forest with ethereal soft morning light filtering through the canopy, high contrast greens" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDxLIXfdOVlCW8FG-_44Gppy9_LK3l_PHzoLEO96cRTa-2j36JjAtJM8mkN0habsMsKIVvq4NA1C5ID562jvcwnH0TnImMq2-MRZrndrYoCADG3IJH2FotI6YrhTj8tny-2zO420-hlNHSlySdKeulvfPq_5DvmIIjq3yMoYkshXV0w2-1nH_PVuBpG53l13mVGTpPc58Jz7kB4zEC_6a0hCJid45g14LhW8W6QOlLyR82gIDG6ec4QK_QcWW9eOfgBVq4Q6e3MFZA"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full glass-panel text-[10px] font-bold tracking-widest uppercase text-on-primary-container">MEDIUM</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<div class="w-full bg-white/20 backdrop-blur-md rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary-fixed h-full w-2/3 glow-tertiary"></div>
+</div>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<h3 class="text-lg font-bold leading-tight group-hover:text-primary transition-colors">Sustainable Ecosystems: A Masterclass</h3>
+<div class="flex justify-between items-center text-xs text-outline font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">schedule</span> 12h 45m
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">group</span> 2.4k students
+                                </div>
+</div>
+<button class="w-full py-3 rounded-full bg-surface-container-high text-primary font-bold text-xs uppercase tracking-widest group-hover:bg-primary group-hover:text-on-primary transition-all">
+                                Resume Lesson
+                            </button>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-500">
+<div class="aspect-[4/3] overflow-hidden relative">
+<img alt="Landscape Design" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Rolling hills covered in lavender and wild flowers at sunset, ethereal purple and golden hues, soft focus foreground" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzYOXQ7AmkWs4HQGwn35pa4AE_6JXrilMtvFuK8c_h-5HMwJVaaRU6QK44_wsHSK7kUXzXjxDBrWvxA2JnqrinPrFSK8LfrJOUtv-jlRpVvNkmtbTSJQcUfPRAHPk98U0mN0m5H2_TYiokPw8V6Cq-XAEUyAhhRKUsfCNRRR_d2u2aB6KkuqYPuiprh_14IdF1yuKeTOOU_-eKzW_ahew3UMHehESCwSrfpdMwO2rqmAqp5v3NE44QymJQr8yP_QaeA-mfw-uFabzo"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full glass-panel text-[10px] font-bold tracking-widest uppercase text-on-primary-container">MEDIUM</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<div class="w-full bg-white/20 backdrop-blur-md rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary-fixed h-full w-1/4 glow-tertiary"></div>
+</div>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<h3 class="text-lg font-bold leading-tight group-hover:text-primary transition-colors">Organic Landscape Architecture</h3>
+<div class="flex justify-between items-center text-xs text-outline font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">schedule</span> 8h 20m
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">group</span> 1.8k students
+                                </div>
+</div>
+<button class="w-full py-3 rounded-full bg-surface-container-high text-primary font-bold text-xs uppercase tracking-widest group-hover:bg-primary group-hover:text-on-primary transition-all">
+                                Resume Lesson
+                            </button>
+</div>
+</div>
+<!-- Course Card 3 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-500">
+<div class="aspect-[4/3] overflow-hidden relative">
+<img alt="Forestry Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Close up of a single glowing sprout emerging from dark forest soil, soft cinematic lighting, bioluminescent accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqV5CfPo_OO9iRZtFjjSn_zrEVkk4i5oCRAIAvDlAhXnnJZQPATnfu2pFXk3Bubs3bWOA6uPxo4t6SPWGFu2gKEggj-8-paDcCoZ0hYGpIAJoE5RE6KYeGTUwNNe4DwCOBoHg3b_nzCQeoXV3qnJ4oAFX37eyHXjB_7faHBK5sUZjFKsZTVYHXNMOcq03Y22wAN8npEmiDKkmVpW2-x01yODe21ldU4UmwS53TFahV8PKjlQwOLOZLJvP9xDYXs_QGhUhCtUB5THz1"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full glass-panel text-[10px] font-bold tracking-widest uppercase text-on-primary-container">MEDIUM</span>
+</div>
+<div class="absolute bottom-4 left-4 right-4">
+<div class="w-full bg-white/20 backdrop-blur-md rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary-fixed h-full w-4/5 glow-tertiary"></div>
+</div>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<h3 class="text-lg font-bold leading-tight group-hover:text-primary transition-colors">Urban Forestry &amp; Botany</h3>
+<div class="flex justify-between items-center text-xs text-outline font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">schedule</span> 15h 10m
+                                </div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">group</span> 4.1k students
+                                </div>
+</div>
+<button class="w-full py-3 rounded-full bg-surface-container-high text-primary font-bold text-xs uppercase tracking-widest group-hover:bg-primary group-hover:text-on-primary transition-all">
+                                Resume Lesson
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats/Activity Section (Extra Layer of Polish) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-surface-container rounded-xl p-8 space-y-6">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-bold tracking-tight">Learning Activity</h3>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 rounded-full bg-surface-container-lowest text-[10px] font-bold tracking-widest uppercase text-primary">WEEK</button>
+<button class="px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase text-outline">MONTH</button>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between gap-2 px-4">
+<div class="w-12 bg-primary/20 rounded-t-full h-1/3 hover:bg-primary/40 transition-colors"></div>
+<div class="w-12 bg-primary/20 rounded-t-full h-1/2 hover:bg-primary/40 transition-colors"></div>
+<div class="w-12 bg-primary rounded-t-full h-full relative group">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">4.2h</div>
+</div>
+<div class="w-12 bg-primary/20 rounded-t-full h-2/3 hover:bg-primary/40 transition-colors"></div>
+<div class="w-12 bg-primary/20 rounded-t-full h-3/4 hover:bg-primary/40 transition-colors"></div>
+<div class="w-12 bg-primary/20 rounded-t-full h-1/2 hover:bg-primary/40 transition-colors"></div>
+<div class="w-12 bg-primary/20 rounded-t-full h-2/5 hover:bg-primary/40 transition-colors"></div>
+</div>
+<div class="flex justify-between text-[10px] font-bold text-outline tracking-widest px-4">
+<span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+</div>
+</div>
+<div class="bg-primary text-on-primary rounded-xl p-8 flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10 space-y-2">
+<h3 class="text-xl font-bold tracking-tight">Next Achievement</h3>
+<p class="text-primary-fixed/60 text-sm">You are only 2 hours away from the 'Seedling Master' badge.</p>
+</div>
+<div class="relative z-10 flex flex-col items-center py-6">
+<div class="w-32 h-32 rounded-full border-[10px] border-primary-container flex items-center justify-center relative">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed glow-tertiary" style="font-variation-settings: 'FILL' 1;">eco</span>
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle cx="64" cy="64" fill="none" r="54" stroke="#bcf540" stroke-dasharray="339" stroke-dashoffset="67" stroke-linecap="round" stroke-width="10"></circle>
+</svg>
+</div>
+<p class="mt-4 font-bold text-lg">80% Complete</p>
+</div>
+<button class="relative z-10 w-full py-3 bg-tertiary-fixed text-on-tertiary-fixed rounded-full font-bold tracking-tight hover:scale-105 transition-transform">
+                        Explore Badges
+                    </button>
+<!-- Organic background decoration -->
+<div class="absolute -bottom-20 -right-20 w-64 h-64 bg-surface/5 rounded-full blur-3xl"></div>
+</div>
+</section>
+</div>
+</main>
+<!-- FAB (Suppressed based on context: suppressed on main dashboard as primary actions are in cards/sidebar) -->
+</body></html>

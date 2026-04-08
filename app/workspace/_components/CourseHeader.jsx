@@ -35,11 +35,7 @@ function CourseHeader({ courseInfo }) {
     "Course Learning";
 
   return (
-    <div className="p-6 flex justify-between items-center shadow-lg backdrop-blur-md text-foreground bg-white/60 dark:bg-white/5 border-b border-white/10 dark:border-white/10 group relative">
-      {/* Subtle animated background pattern */}
-
-      {/* Gradient overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-purple-600/5"></div>
+    <div className="px-6 py-4 flex justify-between items-center shadow-[0px_4px_24px_rgba(0,0,0,0.04)] backdrop-blur-2xl bg-ev-surface/80 dark:bg-[#0f1411]/80 text-ev-on-surface border-b border-ev-outline-variant/30 relative">
 
       {/* Left side - Brand block (acts like back button) */}
       <div className="relative z-10">
@@ -50,32 +46,30 @@ function CourseHeader({ courseInfo }) {
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") handleBack();
           }}
-          className="cursor-pointer flex items-center gap-3 px-2 py-1 rounded-xl hover:bg-white/60 dark:hover:bg-white/10 transition-colors"
+          className="cursor-pointer flex items-center gap-3 px-3 py-2 rounded-full hover:bg-ev-surface-container transition-colors"
           title="Go to Workspace"
         >
-          <div className="h-10 w-10 rounded-xl grid place-items-center bg-gradient-to-br from-indigo-600 to-blue-500 text-white ring-1 ring-black/10 shadow-md shadow-black/10">
+          <div className="h-10 w-10 rounded-full grid place-items-center bg-ev-primary text-ev-surface shadow-sm">
             <GraduationCap className="h-5 w-5" aria-hidden="true" />
             <span className="sr-only">EduVoyage logo</span>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-base font-semibold leading-5 text-gray-900 dark:text-white">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-pink-600">
-                EduVoyage
-              </span>
+            <span className="text-base font-bold leading-5 text-ev-on-surface">
+              EduVoyage
             </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs uppercase tracking-wider text-ev-on-surface-variant font-medium">
               Learning platform
             </span>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 px-4 sm:px-6 md:px-8 relative z-10">
+      <div className="flex-1 px-4 sm:px-6 md:px-8 relative z-10 hide-scrollbar overflow-x-auto whitespace-nowrap hidden sm:flex justify-center">
         {/* Title row */}
-        <div className="text-2xl md:text-3xl font-semibold flex items-center gap-3 tracking-tight justify-center">
+        <div className="text-xl md:text-2xl font-bold flex items-center gap-3 tracking-tight text-ev-on-surface">
           <span className="text-xl md:text-2xl">📚</span>
-          <span className="text-gradient">{courseName}</span>
+          <span className="truncate">{courseName}</span>
         </div>
       </div>
 
@@ -88,16 +82,10 @@ function CourseHeader({ courseInfo }) {
         <ThemeToggleButton />
 
         {/* User */}
-        <div className="relative">
-          <div className="p-0.5 rounded-lg glass border-soft shadow-soft transition-all duration-200 hover:shadow-md hover:bg-white/60 dark:hover:bg-white/10">
-            <UserButton />
-          </div>
+        <div className="p-0.5 rounded-full hover:bg-ev-surface-container transition-colors scale-110">
+          <UserButton />
         </div>
       </div>
-
-      {/* Decorative rules */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--accent)]/50 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color:var(--primary)]/45 to-transparent" />
     </div>
   );
 }

@@ -2,59 +2,304 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "../../../@/components/ui/button";
 import { Input } from "../../../@/components/ui/input";
-import { Progress } from "../../../@/components/ui/progress";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../@/components/ui/card";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../../../@/components/ui/dialog";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../../@/components/ui/tabs";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../@/components/ui/select";
 import {
-  MessageCircle,
-  Send,
   Bot,
   User,
   Sparkles,
-  Lightbulb,
-  TrendingUp,
-  BookOpen,
-  Clock,
+  Send,
+  Paperclip,
   Loader2,
+  GraduationCap,
+  Briefcase,
+  FileText,
+  CheckCircle2,
+  AlertTriangle,
+  Target,
   Zap,
-  MessageSquare,
+  LayoutDashboard,
+  Compass,
+  History,
+  Plus,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../../../@/components/ui/accordion";
+
+const formatSkillAnalysisToHtml = (data) => {
+  return (
+    <div className="font-sans space-y-6 text-[#191c1a] dark:text-[#e1e3df]">
+      {data.summary && (
+        <div className="bg-[#bcf540]/10 border border-[#bcf540]/30 rounded-2xl p-5 mb-4">
+          <div className="flex items-start gap-3">
+            <Sparkles className="h-6 w-6 text-[#bcf540] shrink-0 mt-1" />
+            <p className="text-sm font-medium leading-relaxed">
+              {data.summary}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {data.roleFit && Object.keys(data.roleFit).length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#4e6354] dark:text-[#bcf540] flex items-center gap-2">
+            <Target className="h-4 w-4" /> Role Match
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {Object.entries(data.roleFit).map(([role, fit], idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-[#1a231d] rounded-2xl p-4 border border-[#e1e3df] dark:border-white/5 relative overflow-hidden"
+              >
+                <div
+                  className="absolute top-0 left-0 h-1 bg-[#bcf540]"
+                  style={{ width: `${fit.match}%` }}
+                ></div>
+                <div className="flex justify-between items-center mb-2 mt-1">
+                  <h4 className="font-bold text-sm">{role}</h4>
+                  <span className="text-xs font-black bg-[#e7eee8] dark:bg-[#1f2b23] text-[#4e6354] dark:text-[#bcf540] px-2 py-1 rounded-md">
+                    {fit.match}%
+                  </span>
+                </div>
+                <p className="text-xs text-ev-on-surface-variant font-medium leading-relaxed">
+                  {fit.rationale}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.skillGaps && data.skillGaps.length > 0 && (
+        <div className="space-y-3 mt-6">
+          <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#4e6354] dark:text-[#bcf540] flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4" /> Skill Gaps
+          </h3>
+          <div className="space-y-3">
+            {data.skillGaps.map((gap, idx) => (
+              <div
+                key={idx}
+                className="bg-[#f8faf6] dark:bg-[#151c17] rounded-xl p-4 border border-[#e1e3df] dark:border-white/5 border-l-4 border-l-[#ff5b5b]"
+              >
+                <h4 className="font-bold text-sm mb-1">{gap.skill}</h4>
+                <p className="text-xs text-ev-on-surface-variant mb-2">
+                  <strong>Why:</strong> {gap.why}
+                </p>
+                <p className="text-xs text-[#4e6354] dark:text-[#bcf540] font-medium flex items-center gap-1">
+                  <Zap className="h-3 w-3" /> {gap.how}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.learningPath && data.learningPath.length > 0 && (
+        <div className="space-y-3 mt-6">
+          <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#4e6354] dark:text-[#bcf540] flex items-center gap-2">
+            <Compass className="h-4 w-4" /> Recommended Path
+          </h3>
+          <div className="space-y-4">
+            {data.learningPath.map((path, idx) => (
+              <div
+                key={idx}
+                className="bg-white dark:bg-[#1a231d] rounded-2xl p-4 border border-[#e1e3df] dark:border-white/5"
+              >
+                <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#bcf540]" /> Focus:{" "}
+                  {path.skill}
+                </h4>
+                <div className="space-y-2">
+                  {path.chapters?.map((ch, cidx) => (
+                    <div
+                      key={cidx}
+                      className="bg-[#f8faf6] dark:bg-[#111613] p-3 rounded-lg border border-[#e1e3df] dark:border-white/5 flex flex-col gap-1"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-bold">{ch.title}</span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-ev-on-surface-variant bg-ev-surface-container-high px-2 rounded-full">
+                          {ch.hours} hrs
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-ev-on-surface-variant">
+                        {ch.topics?.join(", ")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const VoyagerLogo = ({ isLoading, className }) => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (isLoading) {
+      videoRef.current
+        ?.play()
+        .catch((e) => console.log("Video auto-play blocked:", e));
+    } else {
+      videoRef.current?.pause();
+    }
+  }, [isLoading]);
+
+  const handleMouseEnter = () => {
+    if (!isLoading) {
+      videoRef.current
+        ?.play()
+        .catch((e) => console.log("Video play on hover blocked:", e));
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isLoading) {
+      videoRef.current?.pause();
+    }
+  };
+
+  return (
+    <div
+      className={`rounded-full overflow-hidden flex items-center justify-center bg-[#212121] shadow-none ring-0 transition-all duration-500 ${isLoading ? "ring-1 ring-[#bcf540]/30 shadow-[0_0_15px_rgba(188,245,64,0.15)] scale-105" : ""} ${className}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <video
+        ref={videoRef}
+        src="/Untitled%20file.webm"
+        className="w-[120%] h-[120%] object-cover"
+        loop
+        muted
+        playsInline
+        style={{ pointerEvents: "none" }}
+      />
+    </div>
+  );
+};
 
 function AiTools() {
-  const [activeTab, setActiveTab] = useState("career-chat");
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "bot",
-      content:
-        "Hello! I'm your AI Career Advisor. I can help you with career guidance, job search tips, skill development advice, and more. What would you like to know about your career?",
-      timestamp: new Date(),
-    },
-  ]);
+  const { user } = useUser();
+
+  const [sessions, setSessions] = useState([]);
+  const [activeSessionId, setActiveSessionId] = useState(null);
+  const [showHistoryPopup, setShowHistoryPopup] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("voyager_history");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.length > 0) {
+          setSessions(parsed);
+          setActiveSessionId(parsed[0].id);
+          setActiveModel(parsed[0].model || "career");
+        } else {
+          createNewChat();
+        }
+      } catch (e) {
+        createNewChat();
+      }
+    } else {
+      createNewChat();
+    }
+  }, []);
+
+  const createNewChat = () => {
+    const newSession = {
+      id: Date.now(),
+      title: "New Chat",
+      model: "career",
+      messages: [
+        {
+          id: 1,
+          type: "bot",
+          content:
+            "Welcome to Voyager AI. I am your Career Advisor. How can I help you today?",
+          timestamp: new Date().toISOString(),
+          isHtml: false,
+        },
+      ],
+    };
+    setSessions((prev) => [newSession, ...prev]);
+    setActiveSessionId(newSession.id);
+    setActiveModel("career");
+  };
+
+  useEffect(() => {
+    if (sessions.length > 0) {
+      localStorage.setItem("voyager_history", JSON.stringify(sessions));
+    }
+  }, [sessions]);
+
+  const updateSession = (updater) => {
+    setSessions((prev) =>
+      prev.map((s) => {
+        if (s.id === activeSessionId) {
+          return updater(s);
+        }
+        return s;
+      }),
+    );
+  };
+
+  const setMessages = (updaterFn) => {
+    updateSession((s) => {
+      const newMessages =
+        typeof updaterFn === "function" ? updaterFn(s.messages) : updaterFn;
+      let title = s.title;
+      if (title === "New Chat" && newMessages.length > 1) {
+        const userMsg = newMessages.find((m) => m.type === "user");
+        if (userMsg) {
+          title = userMsg.content.substring(0, 30) + "...";
+        }
+      }
+      return { ...s, title, messages: newMessages };
+    });
+  };
+
+  const currentSession = sessions.find((s) => s.id === activeSessionId);
+  const messages = currentSession ? currentSession.messages : [];
+
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeModel, setActiveModel] = useState("career");
+
+  // Resume Analyzer Popup State
+  const [showResumePopup, setShowResumePopup] = useState(false);
+  const [resumeFiles, setResumeFiles] = useState([]);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractedResumeText, setExtractedResumeText] = useState("");
+
+  // MCQ State for pop up
+  const [mcqStep, setMcqStep] = useState(1);
+  const [resumeTargets, setResumeTargets] = useState("Frontend Developer");
+  const [resumeYoe, setResumeYoe] = useState("0-1");
+  const [primaryGoal, setPrimaryGoal] = useState("Job Search");
+  const [learningStyle, setLearningStyle] = useState("Project-based");
+
   const [enhancingMessage, setEnhancingMessage] = useState(false);
+
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -65,14 +310,47 @@ function AiTools() {
     scrollToBottom();
   }, [messages]);
 
+  const handleModelChange = (val) => {
+    setActiveModel(val);
+    updateSession((s) => ({ ...s, model: val }));
+    let msg = "";
+    if (val === "resume") {
+      msg =
+        "You have selected the **Resume Analyzer**. Please click the attachment (paperclip) icon below to upload your resume and specify your target roles.";
+    } else if (val === "tutor") {
+      msg =
+        "You have selected the **AI Tutor**. Please note this feature is currently in Beta. You can ask me any learning-specific queries!";
+    } else {
+      msg =
+        "You are now using the **Career Advisor**. Ask me anything regarding your career trajectory or upcoming interviews.";
+    }
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        type: "bot",
+        content: msg,
+        timestamp: new Date().toISOString(),
+        isHtml: false,
+      },
+    ]);
+  };
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if ((!inputMessage.trim() && activeModel !== "resume") || isLoading) return;
+
+    if (activeModel === "resume" && !inputMessage.trim()) {
+      setMcqStep(1);
+      setShowResumePopup(true);
+      return;
+    }
 
     const userMessage = {
       id: Date.now(),
       type: "user",
       content: inputMessage,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
+      isHtml: false,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -80,23 +358,56 @@ function AiTools() {
     setIsLoading(true);
 
     try {
-      const result = await axios.post("/api/ai-career-advisor", {
-        message: inputMessage,
-      });
+      if (activeModel === "career") {
+        const result = await axios.post("/api/ai-career-advisor", {
+          message: inputMessage,
+        });
 
-      if (result.data.success) {
-        const botResponse = {
-          id: Date.now() + 1,
-          type: "bot",
-          content: result.data.response,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, botResponse]);
-      } else {
-        toast.error("Failed to get response. Please try again.");
+        if (result.data.success) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now() + 1,
+              type: "bot",
+              content: result.data.response,
+              timestamp: new Date().toISOString(),
+              isHtml: false,
+            },
+          ]);
+        } else {
+          toast.error("Failed to get response. Please try again.");
+        }
+      } else if (activeModel === "tutor") {
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now() + 1,
+              type: "bot",
+              content:
+                "The advanced AI Tutor module is currently under training and will be available soon. Please switch to the Career Advisor for now.",
+              timestamp: new Date().toISOString(),
+              isHtml: false,
+            },
+          ]);
+          setIsLoading(false);
+        }, 1000);
+        return; // handle async
+      } else if (activeModel === "resume") {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            type: "bot",
+            content:
+              "Please use the attachment icon to upload your resume for analysis.",
+            timestamp: new Date().toISOString(),
+            isHtml: false,
+          },
+        ]);
       }
     } catch (error) {
-      console.error("AI Career Advisor Error:", error);
+      console.error("Voyager AI Error:", error);
       toast.error("Failed to get response. Please try again.");
     } finally {
       setIsLoading(false);
@@ -126,1042 +437,540 @@ function AiTools() {
         toast.error("Failed to enhance question. Please try again.");
       }
     } catch (error) {
-      console.error("Chat enhancement error:", error);
-      if (error.response?.data?.error === "api_key_error") {
-        toast.error(
-          "API key is invalid or missing. Please check your configuration."
-        );
-      } else if (error.response?.data?.error === "quota_exceeded") {
-        toast.error("API quota exceeded. Please try again later.");
-      } else if (error.response?.data?.error === "ai_service_error") {
-        toast.error(
-          "AI service is currently unavailable. Please try again later."
-        );
-      } else {
-        toast.error("Failed to enhance question. Please try again.");
-      }
+      toast.error("Failed to enhance question.");
     } finally {
       setEnhancingMessage(false);
     }
   };
 
-  const suggestedQuestions = [
-    "How can I improve my resume?",
-    "What are common interview questions?",
-    "How do I negotiate salary?",
-    "What skills should I learn?",
-    "How can I network effectively?",
-    "Should I change careers?",
-  ];
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    setResumeFiles(files);
+
+    if (files.length > 0) {
+      setIsExtracting(true);
+      try {
+        const fd = new FormData();
+        files.forEach((f) => fd.append("files", f));
+        const res = await axios.post("/api/extract-text", fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        if (
+          res.data.success &&
+          res.data.text &&
+          res.data.text.trim().length > 10
+        ) {
+          setExtractedResumeText(res.data.text);
+          setMcqStep(2); // Proceed to next section
+        } else {
+          toast.error(
+            "Could not read enough text from the resume. Please try a different file.",
+          );
+          setResumeFiles([]); // Reset
+        }
+      } catch (error) {
+        console.error("Resume extraction error:", error);
+        toast.error(
+          "Failed to read resume. Please ensure it's a valid PDF/DOCX/TXT.",
+        );
+        setResumeFiles([]); // Reset
+      } finally {
+        setIsExtracting(false);
+      }
+    }
+  };
+
+  const handleResumeSubmit = async () => {
+    if (!extractedResumeText) {
+      toast.error("No resume text found. Please upload again.");
+      return;
+    }
+
+    setShowResumePopup(false);
+
+    // Echo user intention
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        type: "user",
+        content: `I've attached my resume to be analyzed for target roles: **${resumeTargets}**. My primary goal is **${primaryGoal}**.`,
+        timestamp: new Date().toISOString(),
+        isHtml: false,
+      },
+    ]);
+
+    setIsLoading(true);
+    try {
+      const res = await axios.post("/api/skill-analyzer", {
+        text: extractedResumeText,
+        targets: resumeTargets
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        stack: [learningStyle],
+        yoe: resumeYoe,
+      });
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          type: "bot",
+          content: "Analysis completed.",
+          rawData: res.data,
+          timestamp: new Date().toISOString(),
+          isHtml: true,
+        },
+      ]);
+    } catch (e) {
+      toast.error("Analysis failed. Please try again.");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          type: "bot",
+          content:
+            "Sorry, I encountered an error while trying to analyze your resume.",
+          timestamp: new Date().toISOString(),
+          isHtml: false,
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+      setResumeFiles([]);
+      setMcqStep(1); // Reset
+    }
+  };
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 dark:from-neutral-900 dark:via-neutral-950 dark:to-black">
-      <div className="max-w-6xl mx-auto">
-        {/* Header with enhanced styling */}
-        <div className="text-center mb-12 relative">
-          {/* Background decoration */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-10">
-            <div className="w-96 h-96 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-3xl"></div>
-          </div>
-
-          <div className="relative z-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl mb-6 shadow-lg">
-              <Bot className="h-10 w-10 text-white" />
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4 tracking-tight">
-              AI Tools Hub
-            </h1>
-
-            <p className="text-gray-600 dark:text-gray-300 text-xl max-w-3xl mx-auto leading-relaxed font-medium">
-              Discover powerful AI-powered tools to enhance your learning
-              journey and accelerate your career development
-            </p>
-
-            {/* Added feature badges */}
-            <div className="flex justify-center gap-4 mt-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-white/10 backdrop-blur-sm border border-blue-200 dark:border-blue-400/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300 shadow-sm">
-                <Sparkles className="h-4 w-4" />
-                AI Powered
-              </div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-white/10 backdrop-blur-sm border border-purple-200 dark:border-purple-400/30 rounded-full text-sm font-medium text-purple-700 dark:text-purple-300 shadow-sm">
-                <Zap className="h-4 w-4" />
-                Instant Results
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col h-full w-full bg-[#212121]/60 backdrop-blur-3xl font-sans text-gray-200 relative overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+      {/* Header */}
+      <div className="flex flex-none items-center justify-between p-6 shrink-0 bg-transparent z-20 border-b border-white/5 shadow-sm min-h-[72px]">
+        <div className="flex-1 flex items-center gap-2 px-2 text-xl font-bold text-gray-100 uppercase tracking-tighter">
+          Voyager AI
         </div>
 
-        {/* Enhanced Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-8 bg-white/80 dark:bg-neutral-900/60 backdrop-blur-md shadow-xl border border-gray-200/50 dark:border-white/10 rounded-2xl p-2 h-auto">
-            <TabsTrigger
-              value="career-chat"
-              className="flex items-center gap-3 p-4 rounded-xl transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:scale-105 hover:bg-gray-50 dark:hover:bg-neutral-900/40"
-            >
-              <MessageCircle className="h-5 w-5" />
-              <span className="font-medium">Career Q&A Chat</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="ai-tutor"
-              className="flex items-center gap-3 p-4 rounded-xl transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:scale-105 hover:bg-gray-50 dark:hover:bg-neutral-900/40"
-            >
-              <BookOpen className="h-5 w-5" />
-              <span className="font-medium">AI Tutor</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="skill-analyzer"
-              className="flex items-center gap-3 p-4 rounded-xl transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:scale-105 hover:bg-gray-50 dark:hover:bg-neutral-900/40"
-            >
-              <TrendingUp className="h-5 w-5" />
-              <span className="font-medium">Skill Analyzer</span>
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col items-center justify-center flex-1">
+          <span className="text-[12px] font-extrabold px-5 py-1.5 rounded-full bg-[#2a2a2a] text-gray-300 tracking-widest uppercase flex items-center gap-2 border border-white/5">
+            {activeModel === "resume" ? (
+              <>
+                <FileText className="w-3.5 h-3.5 text-[#bcf540]" /> Resume
+                Analyzer
+              </>
+            ) : activeModel === "tutor" ? (
+              <>
+                <GraduationCap className="w-3.5 h-3.5 text-[#bcf540]" /> AI
+                Tutor
+              </>
+            ) : (
+              <>
+                <Briefcase className="w-3.5 h-3.5 text-[#bcf540]" /> Career
+                Advisor
+              </>
+            )}
+          </span>
+        </div>
 
-          {/* Enhanced Career Q&A Chat Tab */}
-          <TabsContent value="career-chat" className="space-y-6">
-            <Card className="bg-white/90 dark:bg-neutral-900/60 backdrop-blur-md shadow-2xl border border-gray-100/60 dark:border-white/10 rounded-3xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 text-white">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="p-2 bg-white/20 rounded-xl">
-                    <Bot className="h-6 w-6" />
+        <div className="flex items-center justify-end flex-1 gap-2 pr-2">
+          <Button
+            onClick={createNewChat}
+            variant="ghost"
+            size="sm"
+            className="hidden md:flex gap-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-full font-bold"
+          >
+            <Plus className="w-4 h-4" /> New Chat
+          </Button>
+          <Button
+            onClick={() => setShowHistoryPopup(true)}
+            variant="ghost"
+            size="icon"
+            className="text-gray-300 hover:text-[#bcf540] hover:bg-white/10 rounded-full transition-colors"
+          >
+            <History className="w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Chat Area */}
+      <div className="flex-1 overflow-y-auto p-4 md:px-8 space-y-8 hide-scrollbar relative">
+        <div className="max-w-3xl mx-auto flex flex-col space-y-8 pb-4">
+          {messages.length === 1 && !isLoading && messages[0].id === 1 && (
+            <div className="flex flex-col items-center justify-center mt-20 mb-10 opacity-80">
+              <h2 className="text-3xl font-semibold mb-2 text-white">
+                Where should we begin?
+              </h2>
+            </div>
+          )}
+
+          {messages.map((message) => {
+            if (message.id === 1 && messages.length === 1) return null; // Hide default welcome if it's the only one to show center prompt
+            return (
+              <div
+                key={message.id}
+                className={`flex w-full ${message.type === "user" ? "justify-end" : "justify-start"}`}
+              >
+                {message.type === "user" ? (
+                  <div className="bg-[#2f2f2f] text-gray-100 px-5 py-3 rounded-[1.5rem] max-w-[85%] md:max-w-[75%] shadow-sm font-medium text-[15px]">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                      {message.content}
+                    </Markdown>
                   </div>
-                  AI Career Advisor
-                </CardTitle>
-                <p className="text-blue-100 font-normal text-lg">
-                  Get personalized career guidance, interview tips, and
-                  professional advice
-                </p>
-              </CardHeader>
+                ) : (
+                  <div className="flex items-start gap-4 w-full">
+                    <VoyagerLogo
+                      isLoading={false}
+                      className="w-8 h-8 flex-shrink-0 mt-1 shadow-none ring-0 border border-gray-700/50"
+                    />
+                    <div className="flex-1 mt-1 text-[15px] text-gray-200 font-medium leading-relaxed prose prose-sm prose-invert w-full max-w-full overflow-hidden">
+                      {message.isHtml ? (
+                        message.rawData ? (
+                          formatSkillAnalysisToHtml(message.rawData)
+                        ) : (
+                          message.htmlNode
+                        )
+                      ) : (
+                        <Markdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </Markdown>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
 
-              <CardContent className="p-0">
-                {/* Enhanced Chat Messages */}
-                <div className="h-[60vh] md:h-96 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white dark:from-neutral-900/40 dark:to-neutral-900/10">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${
-                        message.type === "user"
-                          ? "justify-end"
-                          : "justify-start"
-                      }`}
-                    >
-                      <div
-                        className={`max-w-xs lg:max-w-md px-5 py-4 rounded-2xl shadow-md transition-all duration-300 hover:shadow-lg ${
-                          message.type === "user"
-                            ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white transform hover:scale-[1.02]"
-                            : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-100 transform hover:scale-[1.02]"
+          {isLoading && (
+            <div className="flex w-full justify-start animate-in fade-in duration-300">
+              <div className="flex items-start gap-4">
+                <VoyagerLogo
+                  isLoading={true}
+                  className="w-8 h-8 flex-shrink-0 mt-1 shadow-none ring-0 border border-gray-700/50"
+                />
+                <div className="mt-3.5 flex items-center gap-1.5">
+                  <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                  <div
+                    className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.15s" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.3s" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+      {/* Bottom Input Area */}
+      <div className="p-4 bg-transparent shrink-0 pb-6 w-full relative z-20">
+        <div className="max-w-3xl mx-auto flex flex-col gap-3 relative">
+          {/* Main ChatGPT-like Input Pill */}
+          <div className="relative flex items-center w-full bg-[#2f2f2f] rounded-[2rem] p-2 transition-all focus-within:bg-[#323232] shadow-sm">
+            {/* Left Tools Menu (Mode Select) */}
+            <Select value={activeModel} onValueChange={handleModelChange}>
+              <SelectTrigger className="w-10 h-10 rounded-full bg-transparent hover:bg-gray-600/30 border-none shadow-none text-gray-300 p-0 flex justify-center items-center focus:ring-0 cursor-pointer [&[data-state=open]>div>svg]:rotate-45">
+                <div
+                  className="flex items-center justify-center relative group"
+                  title="Change Mode"
+                >
+                  <Plus className="h-[24px] w-[24px] transition-transform duration-200" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl border-gray-700 shadow-xl bg-[#2f2f2f] text-white ml-2 mb-2">
+                <SelectItem
+                  value="resume"
+                  className="rounded-xl font-medium cursor-pointer hover:bg-gray-600"
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" /> Resume Analyzer
+                  </div>
+                </SelectItem>
+                <SelectItem
+                  value="career"
+                  className="rounded-xl font-medium cursor-pointer hover:bg-gray-600"
+                >
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4" /> Career Advisor
+                  </div>
+                </SelectItem>
+                <SelectItem
+                  value="tutor"
+                  className="rounded-xl font-medium cursor-pointer hover:bg-gray-600"
+                >
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4" /> AI Tutor
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            {activeModel === "resume" ? (
+              <button
+                onClick={() => {
+                  setMcqStep(1);
+                  setShowResumePopup(true);
+                }}
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-[#bcf540]/10 text-[#bcf540] hover:bg-[#bcf540]/20 transition-colors ml-1"
+                title="Upload Resume"
+              >
+                <Paperclip className="h-[20px] w-[20px]" />
+              </button>
+            ) : null}
+
+            <Input
+              placeholder={
+                activeModel === "resume"
+                  ? "Ask anything or attach resume..."
+                  : "Ask anything..."
+              }
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="flex-1 bg-transparent border-none focus-visible:ring-0 shadow-none px-3 h-12 text-[15px] font-medium placeholder:text-gray-400 text-gray-100 disabled:opacity-50"
+              disabled={isLoading}
+            />
+
+            <div className="flex items-center gap-1.5 shrink-0 pr-1">
+              {activeModel !== "resume" && (
+                <button
+                  type="button"
+                  onClick={enhanceMessage}
+                  disabled={
+                    !inputMessage.trim() || enhancingMessage || isLoading
+                  }
+                  className="p-2 rounded-full hover:bg-gray-600/50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-gray-300"
+                  title="Enhance question with AI"
+                >
+                  {enhancingMessage ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-[20px] w-[20px] hover:text-[#bcf540] transition-colors" />
+                  )}
+                </button>
+              )}
+              <button
+                onClick={handleSendMessage}
+                disabled={
+                  (!inputMessage.trim() && activeModel !== "resume") ||
+                  isLoading
+                }
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors shadow-sm shrink-0 ${!inputMessage.trim() && activeModel !== "resume" ? "bg-gray-700 text-gray-500 cursor-not-allowed" : "bg-white text-black hover:bg-gray-200"}`}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                ) : (
+                  <Send className="h-4 w-4 -ml-[1px]" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-[11px] font-medium text-gray-500 mt-1">
+              Powered by Ethereal Grove Labs. AI can make mistakes. Check
+              important info.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* History Dialog */}
+      <Dialog open={showHistoryPopup} onOpenChange={setShowHistoryPopup}>
+        <DialogContent className="sm:max-w-md bg-[#212121] border border-white/10 rounded-[1.5rem] shadow-2xl p-6 text-gray-200 overflow-hidden flex flex-col">
+          <DialogHeader className="shrink-0 mb-4">
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              <History className="w-5 h-5 text-[#bcf540]" /> Chat History
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2 hide-scrollbar flex-1">
+            <Button
+              onClick={createNewChat}
+              variant="outline"
+              className="w-full flex md:hidden gap-2 mb-4 border-white/20 text-gray-300 hover:text-white rounded-xl font-bold h-12"
+            >
+              <Plus className="w-4 h-4" /> Start New Chat
+            </Button>
+            {sessions.map((session) => (
+              <button
+                key={session.id}
+                onClick={() => {
+                  setActiveSessionId(session.id);
+                  setActiveModel(session.model || "career");
+                  setShowHistoryPopup(false);
+                }}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all border ${activeSessionId === session.id ? "bg-[#2f2f2f] border-white/10 shadow-sm" : "border-transparent hover:bg-white/5"}`}
+              >
+                <p className="text-sm font-semibold truncate text-gray-200">
+                  {session.title || "New Chat"}
+                </p>
+                <p className="text-xs text-gray-500 mt-1 capitalize">
+                  {session.model || "career"} Mode •{" "}
+                  {new Date(session.id || Date.now()).toLocaleDateString()}
+                </p>
+              </button>
+            ))}
+            {sessions.length === 0 && (
+              <p className="text-sm text-gray-500 text-center py-4 font-medium">
+                No chat history found.
+              </p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Resume Analyzer Popup Dialog - MCQ Based */}
+      <Dialog open={showResumePopup} onOpenChange={setShowResumePopup}>
+        <DialogContent className="sm:max-w-lg bg-ev-surface-container-lowest rounded-[2rem] border-0 shadow-2xl p-6 sm:p-8">
+          <DialogHeader>
+            <div className="mx-auto w-16 h-16 bg-[#e7eee8] dark:bg-[#1f2b23] rounded-full flex items-center justify-center mb-4 shadow-inner">
+              {mcqStep === 1 ? (
+                <FileText className="w-8 h-8 text-[#4e6354] dark:text-[#bcf540]" />
+              ) : (
+                <LayoutDashboard className="w-8 h-8 text-[#4e6354] dark:text-[#bcf540]" />
+              )}
+            </div>
+            <DialogTitle className="text-xl md:text-2xl font-extrabold text-center text-ev-on-surface">
+              {mcqStep === 1 ? "Upload Resume" : "Quick Voyager Questionnaire"}
+            </DialogTitle>
+            <DialogDescription className="text-center font-medium text-ev-on-surface-variant">
+              {mcqStep === 1
+                ? "Provide your PDF/DOCX/TXT to begin."
+                : "Help Voyager understand your goals better."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-6 py-4">
+            {mcqStep === 1 ? (
+              <div className="border-2 border-dashed border-ev-outline-variant/50 rounded-2xl p-8 text-center hover:bg-ev-surface-container/50 transition-colors cursor-pointer relative overflow-hidden group">
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  disabled={isExtracting}
+                  accept=".pdf,.docx,.txt"
+                  className={`absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 ${isExtracting ? "hidden" : ""}`}
+                />
+                <div className="mb-4 w-12 h-12 rounded-full bg-ev-primary/10 mx-auto flex items-center justify-center">
+                  {isExtracting ? (
+                    <Loader2 className="h-6 w-6 text-ev-primary animate-spin" />
+                  ) : (
+                    <Paperclip className="h-6 w-6 text-ev-primary" />
+                  )}
+                </div>
+                <p className="text-base font-bold text-ev-on-surface">
+                  {isExtracting
+                    ? "Extracting text..."
+                    : resumeFiles.length > 0
+                      ? resumeFiles[0].name
+                      : "Click or drag resume here (PDF/DOCX/TXT)"}
+                </p>
+                <p className="text-xs text-ev-on-surface-variant mt-2 font-medium">
+                  Max file size 10MB.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-5 animate-in fade-in zoom-in duration-300">
+                {/* Question 1 */}
+                <div>
+                  <p className="text-sm font-bold text-ev-on-surface mb-2">
+                    1. What is your primary Goal?
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      "Job Search",
+                      "Level Up Skills",
+                      "Career Switch",
+                      "Freelance",
+                    ].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setPrimaryGoal(opt)}
+                        className={`p-3 rounded-xl border text-sm font-bold transition-all ${
+                          primaryGoal === opt
+                            ? "bg-[#bcf540]/10 border-[#bcf540] text-[#4e6354] dark:text-[#bcf540]"
+                            : "border-ev-outline-variant/30 hover:border-ev-primary/50 text-ev-on-surface-variant"
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          {message.type === "bot" && (
-                            <div className="p-1.5 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
-                              <Bot className="h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0" />
-                            </div>
-                          )}
-                          <div className="flex-1">
-                            {message.type === "bot" ? (
-                              <Markdown remarkPlugins={[remarkGfm]}>
-                                {message.content}
-                              </Markdown>
-                            ) : (
-                              <p className="text-sm leading-relaxed">
-                                {message.content}
-                              </p>
-                            )}
-                            <p
-                              className={`text-xs mt-2 font-medium ${
-                                message.type === "user"
-                                  ? "text-blue-100"
-                                  : "text-gray-500 dark:text-gray-400"
-                              }`}
-                            >
-                              {message.timestamp.toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                          {message.type === "user" && (
-                            <div className="p-1.5 bg-white/20 dark:bg-white/10 rounded-lg">
-                              <User className="h-4 w-4 text-white flex-shrink-0" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-gray-100 max-w-xs lg:max-w-md px-5 py-4 rounded-2xl shadow-md">
-                        <div className="flex items-center gap-3">
-                          <div className="p-1.5 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
-                            <Bot className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div className="flex gap-1">
-                              <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                              <div
-                                className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                                style={{ animationDelay: "0.1s" }}
-                              ></div>
-                              <div
-                                className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
-                                style={{ animationDelay: "0.2s" }}
-                              ></div>
-                            </div>
-                            <span className="text-sm font-medium">
-                              AI is thinking...
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div ref={messagesEndRef} />
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Enhanced Suggested Questions */}
-                <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-white/5 dark:to-white/0 border-t border-gray-100 dark:border-white/10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Lightbulb className="h-4 w-4 text-amber-500" />
-                    <p className="text-sm text-gray-700 dark:text-gray-300 font-semibold">
-                      Quick Start Questions:
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-3">
-                    {suggestedQuestions.map((question, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setInputMessage(question)}
-                        className="text-xs bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 hover:border-blue-300 dark:border-white/10 hover:text-blue-600 dark:hover:text-blue-400 hover:shadow-md transition-all duration-300 rounded-xl border-gray-200"
+                {/* Question 2 */}
+                <div>
+                  <p className="text-sm font-bold text-ev-on-surface mb-2">
+                    2. Years of Experience?
+                  </p>
+                  <div className="flex gap-2">
+                    {["0-1", "2-4", "5-8", "9+"].map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setResumeYoe(opt)}
+                        className={`flex-1 py-2 rounded-xl border text-sm font-bold transition-all ${
+                          resumeYoe === opt
+                            ? "bg-[#bcf540]/10 border-[#bcf540] text-[#4e6354] dark:text-[#bcf540]"
+                            : "border-ev-outline-variant/30 hover:border-ev-primary/50 text-ev-on-surface-variant"
+                        }`}
                       >
-                        {question}
-                      </Button>
+                        {opt}
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Enhanced Input Area */}
-                <div className="p-6 bg-white dark:bg-neutral-900/60 border-t border-gray-100 dark:border-white/10">
-                  <div className="flex gap-3">
-                    <div className="flex-1 relative">
-                      <Input
-                        placeholder="Ask me anything about your career..."
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        className="pr-20 border-2 border-gray-200 dark:border-white/10 bg-white/80 dark:bg-neutral-800/60 backdrop-blur-sm focus:border-blue-400 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-100 dark:focus:ring-blue-900/40 rounded-2xl h-12 text-base transition-all duration-300 placeholder-gray-400 dark:placeholder-gray-500"
-                        disabled={isLoading}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={enhanceMessage}
-                          disabled={
-                            !inputMessage.trim() ||
-                            enhancingMessage ||
-                            isLoading
-                          }
-                          className="p-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
-                          title="Enhance question with AI for better career advice"
-                        >
-                          {enhancingMessage ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                          ) : (
-                            <Sparkles className="h-4 w-4 text-blue-600 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={handleSendMessage}
-                      disabled={!inputMessage.trim() || isLoading}
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 h-12 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                    >
-                      {isLoading ? (
-                        <div className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="text-sm">Sending...</span>
-                        </div>
-                      ) : (
-                        <Send className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
+                {/* Target Roles */}
+                <div>
+                  <p className="text-sm font-bold text-ev-on-surface mb-2">
+                    3. Target Roles
+                  </p>
+                  <Input
+                    value={resumeTargets}
+                    onChange={(e) => setResumeTargets(e.target.value)}
+                    placeholder="e.g. Frontend, Backend, AI..."
+                    className="bg-transparent border-ev-outline-variant/30 focus-visible:ring-ev-primary/30 h-11 rounded-xl font-medium"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            )}
+          </div>
 
-          {/* Enhanced AI Tutor Tab */}
-          <TabsContent value="ai-tutor" className="space-y-6">
-            <Card className="bg-white/90 dark:bg-neutral-900/60 backdrop-blur-md shadow-2xl border border-gray-100/60 dark:border-white/10 rounded-3xl overflow-hidden">
-              <CardContent className="p-16 text-center relative">
-                {/* Background pattern */}
-                <div className="absolute inset-0 opacity-5">
-                  <div className="grid grid-cols-8 gap-4 h-full">
-                    {Array.from({ length: 32 }).map((_, i) => (
-                      <div key={i} className="bg-blue-400 dark:bg-white rounded-full"></div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="relative z-10 space-y-8">
-                  <div className="mx-auto w-32 h-32 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-500/20 dark:to-purple-500/20 rounded-3xl flex items-center justify-center shadow-xl">
-                    <BookOpen className="h-16 w-16 text-blue-500 dark:text-blue-300" />
-                  </div>
-
-                  <div>
-                    <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-3">
-                      AI Tutor
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 max-w-lg mx-auto text-lg leading-relaxed">
-                      Get personalized tutoring and learning assistance powered
-                      by advanced AI technology.
-                    </p>
-                  </div>
-
-                  <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-500/15 dark:to-orange-500/15 text-yellow-800 dark:text-yellow-300 rounded-2xl text-sm font-semibold shadow-lg">
-                    <Clock className="h-5 w-5" />
-                    Coming Soon - Stay Tuned!
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Skill Analyzer Tab */}
-          <TabsContent value="skill-analyzer" className="space-y-6">
-            <SkillAnalyzerPanel />
-          </TabsContent>
-        </Tabs>
-      </div>
+          <DialogFooter className="sm:justify-center">
+            {mcqStep === 1 ? (
+              <Button
+                onClick={() => setMcqStep(2)}
+                disabled={!extractedResumeText || isExtracting}
+                className="w-full rounded-full bg-ev-primary hover:bg-ev-primary/90 text-white h-12 font-bold text-base shadow-md disabled:opacity-50 transition-all"
+              >
+                Continue
+              </Button>
+            ) : (
+              <div className="w-full flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setMcqStep(1)}
+                  className="flex-1 rounded-full border-ev-outline-variant/30 h-12 font-bold text-base"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleResumeSubmit}
+                  disabled={isLoading}
+                  className="flex-[2] rounded-full bg-ev-primary hover:bg-ev-primary/90 text-white h-12 font-bold text-base shadow-md disabled:opacity-50"
+                >
+                  Generate Analysis
+                </Button>
+              </div>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 export default AiTools;
-
-function ScoreDonut({ value }) {
-  const radius = 54;
-  const circumference = 2 * Math.PI * radius;
-  const clamped = Math.max(0, Math.min(100, value || 0));
-  const offset = circumference - (clamped / 100) * circumference;
-  const status =
-    clamped < 60 ? "Needs Work" : clamped < 80 ? "Good Start" : "Excellent";
-  const statusColor =
-    clamped < 60
-      ? "text-red-600"
-      : clamped < 80
-      ? "text-amber-600"
-      : "text-green-600";
-  return (
-    <div className="flex flex-col items-center">
-      <svg width="140" height="140" className="rotate-[-90deg]">
-        <circle
-          cx="70"
-          cy="70"
-          r={radius}
-          stroke="#e5e7eb"
-          strokeWidth="12"
-          fill="none"
-        />
-        <circle
-          cx="70"
-          cy="70"
-          r={radius}
-          stroke="url(#g)"
-          strokeWidth="12"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          fill="none"
-          className="transition-all duration-700"
-        />
-        <defs>
-          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#8b5cf6" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <div className="-mt-24 text-center">
-        <div className="text-4xl font-extrabold">{clamped}</div>
-        <div className={`text-sm font-semibold ${statusColor}`}>{status}</div>
-      </div>
-    </div>
-  );
-}
-
-function SkillAnalyzerPanel() {
-  const { user } = useUser();
-  const [mode, setMode] = useState("text");
-  const [text, setText] = useState("");
-  const [files, setFiles] = useState([]);
-  const [targets, setTargets] = useState("");
-  const [yoe, setYoe] = useState("");
-  const [stack, setStack] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [result, setResult] = useState(null);
-  const resultRef = useRef(null);
-
-  // Auto-scroll to result when it appears to keep alignment clean
-  useEffect(() => {
-    if (result && resultRef?.current) {
-      try {
-        resultRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      } catch {}
-    }
-  }, [result]);
-
-  const onFileChange = (e) => {
-    const f = Array.from(e.target.files || []);
-    if (f.some((x) => x.size > 10 * 1024 * 1024)) {
-      toast.error("File too large (max 10MB)");
-      return;
-    }
-    if (f.length > 5) {
-      toast.error("Max 5 files");
-      return;
-    }
-    setFiles(f);
-  };
-
-  const analyze = async () => {
-    try {
-      // Check if text or files are provided
-      if (!text && files.length === 0) {
-        toast.error("Provide text or upload files");
-        return;
-      }
-
-      // Validate required fields
-      const hasTargets = targets.trim() !== "";
-      const hasYoe = yoe.trim() !== "";
-      const hasStack = stack.trim() !== "";
-
-      // Check what's missing and show specific warnings
-      if (!hasTargets && !hasYoe && !hasStack) {
-        toast.error(
-          "Please fill in Roles, Years of Experience, and Tech Stack"
-        );
-        return;
-      }
-
-      if (hasTargets && !hasYoe && !hasStack) {
-        toast.error("Please fill in Years of Experience & Tech Stack");
-        return;
-      }
-
-      if (hasTargets && hasYoe && !hasStack) {
-        toast.error("Please fill in Tech Stack");
-        return;
-      }
-
-      if (hasTargets && !hasYoe && hasStack) {
-        toast.error("Please fill in Years of Experience");
-        return;
-      }
-
-      if (!hasTargets && hasYoe && !hasStack) {
-        toast.error("Please fill in Roles & Tech Stack");
-        return;
-      }
-
-      if (!hasTargets && hasYoe && hasStack) {
-        toast.error("Please fill in Roles");
-        return;
-      }
-
-      if (!hasTargets && !hasYoe && hasStack) {
-        toast.error("Please fill in Roles & Years of Experience");
-        return;
-      }
-
-      // If we reach here, all fields are filled
-      setLoading(true);
-      setResult(null);
-      const params = {
-        targets: targets.split(",").filter(Boolean),
-        stack: stack.split(",").filter(Boolean),
-        yoe,
-      };
-      if (mode === "image" && files.length) {
-        const fd = new FormData();
-        fd.append("text", text);
-        fd.append("targets", params.targets.join(","));
-        fd.append("stack", params.stack.join(","));
-        if (yoe) fd.append("yoe", String(yoe));
-        files.forEach((f) => fd.append("files", f));
-        const res = await axios.post("/api/skill-analyzer/image", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        setResult(normalizeResult(res.data));
-      } else if (mode === "upload" && files.length) {
-        const fd = new FormData();
-        fd.append("text", text);
-        fd.append("targets", params.targets.join(","));
-        fd.append("stack", params.stack.join(","));
-        if (yoe) fd.append("yoe", String(yoe));
-        files.forEach((f) => fd.append("files", f));
-        const res = await axios.post("/api/skill-analyzer", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        setResult(normalizeResult(res.data));
-      } else {
-        const res = await axios.post("/api/skill-analyzer", {
-          text,
-          ...params,
-        });
-        setResult(normalizeResult(res.data));
-      }
-    } catch (e) {
-      toast.error("Analysis failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveSnapshot = async () => {
-    if (saving) return;
-
-    try {
-      setSaving(true);
-      const res = await axios.post("/api/skill-analyzer/save", {
-        inputMeta: { mode, targets, yoe, stack },
-        result,
-      });
-
-      if (res.data?.ok) {
-        toast.success(res.data.message || "Analysis saved successfully!");
-
-        // Download PDF if available
-        if (res.data.pdfData) {
-          const { base64, filename } = res.data.pdfData;
-
-          // Create download link
-          const link = document.createElement("a");
-          link.href = base64;
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          toast.success("PDF downloaded successfully!");
-        }
-      } else {
-        toast.info(res.data?.note || "Save completed");
-      }
-    } catch (e) {
-      console.error("Save error:", e);
-      if (e.response?.data?.error === "Auth required") {
-        toast.error("Please sign in to save analysis");
-      } else {
-        toast.error("Save failed. Please try again.");
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="space-y-8">
-      {/* Input Information Section */}
-      <Card className="bg-white/95 dark:bg-neutral-900/60 backdrop-blur-md shadow-2xl hover:shadow-3xl border border-gray-100/60 dark:border-white/10 rounded-3xl overflow-hidden transition-all duration-500 transform hover:-translate-y-1 relative">
-        {/* Subtle background pattern */}
-        <div className='absolute inset-0 bg-[url("data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%2306b6d4" fill-opacity="0.03"%3E%3Ccircle cx="20" cy="20" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")] opacity-60 dark:opacity-10'></div>
-
-        <CardContent className="p-8 md:p-12 space-y-10 relative z-10">
-          {/* Header */}
-          <div className="flex items-start gap-6 mb-8">
-            <div className="p-4 bg-gradient-to-br from-emerald-100 via-green-100 to-teal-100 dark:from-emerald-500/20 dark:via-green-500/20 dark:to-teal-500/20 rounded-3xl shadow-lg border border-green-200/50 dark:border-green-400/20 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-emerald-400/10"></div>
-              <TrendingUp className="h-8 w-8 text-emerald-700 dark:text-emerald-300 relative z-10" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 bg-clip-text text-transparent tracking-tight mb-2">
-                Skill Analyzer
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed font-medium max-w-2xl">
-                Paste your resume, upload PDF/DOCX or images. Get skills, gaps,
-                and a personalized learning plan.
-              </p>
-              <div className="w-16 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full mt-3"></div>
-            </div>
-          </div>
-
-          {/* Mode Tabs */}
-          <div
-            className="flex gap-2 p-2 bg-gray-100/80 dark:bg-white/5 backdrop-blur-sm rounded-2xl shadow-inner"
-            role="tablist"
-            aria-label="Input mode"
-          >
-            <Button
-              variant={mode === "text" ? "default" : "ghost"}
-              onClick={() => setMode("text")}
-              className={`rounded-xl text-sm font-semibold flex-1 transition-all duration-300 ${
-                mode === "text"
-                  ? "bg-white dark:bg-white/10 shadow-lg shadow-blue-200/50 text-blue-700 dark:text-blue-300 hover:bg-white dark:hover:bg-white/10 transform scale-105"
-                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-white/50 dark:hover:bg-white/10"
-              }`}
-            >
-              📝 Paste Text
-            </Button>
-            <Button
-              variant={mode === "upload" ? "default" : "ghost"}
-              onClick={() => setMode("upload")}
-              className={`rounded-xl text-sm font-semibold flex-1 transition-all duration-300 ${
-                mode === "upload"
-                  ? "bg-white dark:bg-white/10 shadow-lg shadow-blue-200/50 text-blue-700 dark:text-blue-300 hover:bg-white dark:hover:bg-white/10 transform scale-105"
-                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-white/50 dark:hover:bg-white/10"
-              }`}
-            >
-              📄 Upload PDF/DOCX
-            </Button>
-            <Button
-              variant={mode === "image" ? "default" : "ghost"}
-              onClick={() => setMode("image")}
-              className={`rounded-xl text-sm font-semibold flex-1 transition-all duration-300 ${
-                mode === "image"
-                  ? "bg-white dark:bg-white/10 shadow-lg shadow-blue-200/50 text-blue-700 dark:text-blue-300 hover:bg-white dark:hover:bg-white/10 transform scale-105"
-                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-white/50 dark:hover:bg-white/10"
-              }`}
-            >
-              🖼️ Upload Image
-            </Button>
-          </div>
-
-          {/* Textarea */}
-          <div className="relative">
-            <textarea
-              aria-label="Resume text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="📋 Paste your resume or profile text here... We'll analyze your skills and suggest improvements!"
-              className="w-full h-44 p-6 border-2 border-gray-200/80 dark:border-white/10 rounded-2xl shadow-lg bg-white/80 dark:bg-white/10 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-blue-200/60 dark:focus:ring-blue-900/40 focus:border-blue-400 dark:focus:border-blue-400 text-sm resize-none transition-all duration-300 hover:shadow-xl hover:border-gray-300 dark:hover:border-white/20 placeholder-gray-400 dark:placeholder-gray-500"
-            />
-            <div className="absolute bottom-4 right-4 text-xs text-gray-400 dark:text-gray-500 bg-white/80 dark:bg-white/10 px-2 py-1 rounded-lg backdrop-blur-sm">
-              {text.length}/5000
-            </div>
-          </div>
-
-          {/* File Upload */}
-          {(mode === "upload" || mode === "image") && (
-            <div className="border-2 border-dashed border-gray-300 dark:border-white/10 rounded-3xl p-8 text-center bg-gradient-to-br from-gray-50 to-white dark:from-white/5 dark:to-white/0 hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-500/5 dark:hover:to-indigo-500/5 hover:border-blue-300 dark:hover:border-blue-400/40 transition-all duration-300 cursor-pointer group relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-purple-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-500/20 dark:to-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-2xl">
-                    {mode === "image" ? "🖼️" : "📄"}
-                  </span>
-                </div>
-                <input
-                  aria-label="File uploader"
-                  type="file"
-                  multiple
-                  onChange={onFileChange}
-                  accept={mode === "image" ? ".jpg,.jpeg,.png" : ".pdf,.docx"}
-                  className="text-sm font-medium text-gray-600 dark:text-gray-300"
-                />
-              </div>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                {mode === "image"
-                  ? "Drop images here or click to browse"
-                  : "Drop PDF/DOCX files here or click to browse"}
-              </p>
-
-              {files.length > 0 && (
-                <div className="mt-6 text-sm text-gray-700 dark:text-gray-300 space-y-2 relative z-10">
-                  <p className="font-medium text-gray-800 dark:text-gray-200 mb-3">
-                    📁 Selected Files:
-                  </p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {files.map((f, i) => (
-                      <div
-                        key={i}
-                        className="px-4 py-2 bg-white dark:bg-white/10 rounded-xl shadow-md text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-white/10 text-sm font-medium flex items-center gap-2 hover:shadow-lg transition-all duration-200"
-                      >
-                        <span>{mode === "image" ? "🖼️" : "📄"}</span>
-                        {f.name}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Inputs (Targets, YOE, Stack) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="relative">
-              <Input
-                aria-label="Target roles"
-                placeholder="🎯 Target roles (comma separated)"
-                value={targets}
-                onChange={(e) => setTargets(e.target.value)}
-                className="rounded-2xl border-2 border-gray-200/80 dark:border-white/10 bg-white/80 dark:bg-white/10 backdrop-blur-sm focus:ring-4 focus:ring-blue-200/60 dark:focus:ring-blue-900/40 focus:border-blue-400 dark:focus:border-blue-400 transition-all duration-300 hover:shadow-lg hover:border-gray-300 dark:hover:border-white/20 h-12 px-4"
-              />
-            </div>
-
-            <div className="relative">
-              <select
-                aria-label="Years of experience"
-                value={yoe}
-                onChange={(e) => setYoe(e.target.value)}
-                className="w-full border-2 border-gray-200/80 dark:border-white/10 rounded-2xl p-3 text-sm shadow-md bg-white/80 dark:bg-white/10 text-foreground backdrop-blur-sm focus:ring-4 focus:ring-blue-200/60 dark:focus:ring-blue-900/40 focus:border-blue-400 dark:focus:border-blue-400 transition-all duration-300 hover:shadow-lg hover:border-gray-300 dark:hover:border-white/20 h-12 appearance-none cursor-pointer"
-              >
-                <option value="">⏱️ Years of experience</option>
-                <option value="0-1">0-1 years</option>
-                <option value="2-4">2-4 years</option>
-                <option value="5-8">5-8 years</option>
-                <option value="9+">9+ years</option>
-              </select>
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <svg
-                  className="w-4 h-4 text-gray-400 dark:text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <div className="relative">
-              <Input
-                aria-label="Tech stack"
-                placeholder="⚡ Tech stack (comma separated)"
-                value={stack}
-                onChange={(e) => setStack(e.target.value)}
-                className="rounded-2xl border-2 border-gray-200/80 dark:border-white/10 bg-white/80 dark:bg-white/10 backdrop-blur-sm focus:ring-4 focus:ring-blue-200/60 dark:focus:ring-blue-900/40 focus:border-blue-400 dark:focus:border-blue-400 transition-all duration-300 hover:shadow-lg hover:border-gray-300 dark:hover:border-white/20 h-12 px-4"
-              />
-            </div>
-          </div>
-
-          {/* Textarea */}
-          <div className="relative">
-            <textarea
-              aria-label="Resume text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="📋 Paste your resume or profile text here... We'll analyze your skills and suggest improvements!"
-              className="w-full h-44 p-6 border-2 border-gray-200/80 dark:border-white/10 rounded-2xl shadow-lg bg-white/80 dark:bg-white/10 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-blue-200/60 dark:focus:ring-blue-900/40 focus:border-blue-400 dark:focus:border-blue-400 text-sm resize-none transition-all duration-300 hover:shadow-xl hover:border-gray-300 dark:hover:border-white/20 placeholder-gray-400 dark:placeholder-gray-500"
-            />
-            <div className="absolute bottom-4 right-4 text-xs text-gray-400 dark:text-gray-500 bg-white/80 dark:bg-white/10 px-2 py-1 rounded-lg backdrop-blur-sm">
-              {text.length}/5000
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-6 pt-4">
-            <Button
-              onClick={analyze}
-              disabled={loading}
-              className={`rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 px-8 py-3 font-semibold text-base relative overflow-hidden ${
-                loading
-                  ? "bg-gradient-to-r from-gray-400 to-gray-500"
-                  : "bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                {loading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    <span>🔍 Analyzing...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🚀 Analyze Skills</span>
-                  </>
-                )}
-              </div>
-              {!loading && (
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              )}
-            </Button>
-
-            {user ? (
-              <Button
-                variant="outline"
-                onClick={saveSnapshot}
-                disabled={!result || saving}
-                className={`rounded-2xl border-2 transition-all duration-300 transform hover:scale-105 px-6 py-3 font-semibold relative overflow-hidden ${
-                  result && !saving
-                    ? "border-blue-300 text-blue-700 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 shadow-lg hover:shadow-xl"
-                    : "border-gray-200 text-gray-400 bg-gray-50 dark:border-gray-500 dark:text-gray-500 dark:bg-gray-700"
-                }`}
-                title="Save analysis to database and download as PDF"
-              >
-                <div className="flex items-center gap-2">
-                  {saving ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Generating PDF...</span>
-                    </>
-                  ) : (
-                    <span>📄 Save & Download PDF</span>
-                  )}
-                </div>
-              </Button>
-            ) : (
-              <div
-                className="flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-400/30 rounded-xl"
-                aria-live="polite"
-              >
-                <span className="text-lg">🔒</span>
-                <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">
-                  Sign in to save snapshots
-                </span>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Result Section - Only shown after analysis */}
-      {result && (
-        <Card
-          ref={resultRef}
-          className="bg-white/90 dark:bg-white/5 backdrop-blur-sm shadow-2xl border-0 rounded-3xl overflow-hidden transition-all hover:shadow-3xl scroll-mt-24"
-        >
-          <CardContent className="p-6 md:p-10">
-            <ResultPanel data={result} />
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-}
-
-function ResultPanel({ data }) {
-  const subs = [
-    { label: "Core Tech", key: "Core Tech" },
-    { label: "Frameworks", key: "Frameworks" },
-    { label: "CS Fundamentals", key: "CS Fundamentals" },
-    { label: "Tooling", key: "Tooling" },
-    { label: "Soft Skills", key: "Soft Skills" },
-  ];
-  const prof = data?.proficiency || {};
-  const overall = Math.round(
-    Object.values(prof).reduce((a, v) => a + (v?.score || 0), 0) /
-      Math.max(1, Object.keys(prof).length)
-  );
-
-  return (
-    <div className="space-y-8">
-      {/* Top Row - Overall Score and Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Overall Skill Score */}
-        <div className="bg-white dark:bg-white/5 rounded-2xl p-5 shadow-md hover:shadow-lg transition-all">
-          <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-            Overall Skill Score
-          </div>
-          <ScoreDonut value={overall} />
-        </div>
-
-        {/* Summary */}
-        {data?.summary && (
-          <Card className="p-5 shadow-md rounded-2xl lg:col-span-2">
-            <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-              Summary
-            </div>
-            <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-              {data.summary}
-            </p>
-          </Card>
-        )}
-      </div>
-
-      {/* Second Row - Role Fit and Skill Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Role Fit */}
-        {data?.roleFit && (
-          <Card className="p-5 shadow-md rounded-2xl">
-            <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-              Role Fit
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(data.roleFit).map(([role, info], i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-400/30"
-                >
-                  {role}: {info.match}
-                </span>
-              ))}
-            </div>
-          </Card>
-        )}
-
-        {/* Skill Categories */}
-        <div className="grid grid-cols-2 gap-3 lg:col-span-3">
-          {subs.map((s, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-white/5 rounded-xl p-4 border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-md transition-all"
-            >
-              <div className="text-xs font-medium text-gray-500 dark:text-gray-400">{s.label}</div>
-              <Progress
-                value={averageForCategory(data, s.key)}
-                className="h-2 mt-2 rounded-full"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Third Row - Proficiency and Extracted Skills */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Proficiency */}
-        {prof && (
-          <Card className="p-5 shadow-md rounded-2xl">
-            <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
-              Proficiency
-            </div>
-            <div className="space-y-3 max-h-80 overflow-y-auto">
-              {Object.entries(prof).map(([skill, v], i) => (
-                <div key={i}>
-                  <div className="flex justify-between text-sm font-medium">
-                    <span>{skill}</span>
-                    <span className="text-gray-500 dark:text-gray-400 text-xs">
-                      {v.score}% · {v.band}
-                    </span>
-                  </div>
-                  <Progress value={v.score} className="h-2 mt-1 rounded-full" />
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
-
-        {/* Extracted Skills */}
-        {Array.isArray(data?.extractedSkills) && (
-          <Card className="p-5 shadow-md rounded-2xl">
-            <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-              Extracted Skills
-            </div>
-            <ul className="space-y-2 text-sm max-h-80 overflow-y-auto">
-              {data.extractedSkills.map((s, i) => (
-                <li key={i} className="leading-snug">
-                  <span className="font-semibold">{s.name}</span>{" "}
-                  <span className="text-gray-500 dark:text-gray-400">({s.category})</span> —{" "}
-                  <span className="text-gray-700 dark:text-gray-300">{s.evidence}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
-      </div>
-
-      {/* Fourth Row - Skill Gaps and Learning Path */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Skill Gaps */}
-        {Array.isArray(data?.skillGaps) && (
-          <Card className="p-5 shadow-md rounded-2xl">
-            <div className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-              Skill Gaps
-            </div>
-            <ul className="list-disc list-inside space-y-2 text-sm text-gray-700 dark:text-gray-300 max-h-80 overflow-y-auto">
-              {data.skillGaps.map((g, i) => (
-                <li key={i}>
-                  <span className="font-semibold">{g.skill}:</span> {g.why} —{" "}
-                  <span className="text-blue-700 dark:text-blue-300">{g.how}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
-
-        {/* Learning Path */}
-        {Array.isArray(data?.learningPath) && (
-          <Card className="shadow-md rounded-2xl">
-            <div className="px-4 pt-4 text-sm font-semibold text-gray-600 dark:text-gray-300">
-              Learning Path
-            </div>
-            <Accordion
-              type="single"
-              collapsible
-              className="px-2 max-h-80 overflow-y-auto"
-            >
-              {data.learningPath.map((lp, i) => (
-                <AccordionItem key={i} value={`item-${i}`}>
-                  <AccordionTrigger className="text-sm font-semibold">
-                    {lp.skill}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-3">
-                      {lp.chapters?.map((c, j) => (
-                        <div
-                          key={j}
-                          className="border rounded-xl p-3 bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border-gray-200 dark:border-white/10 transition-all"
-                        >
-                          <div className="flex justify-between text-sm font-semibold">
-                            <span>{c.title}</span>
-                            <span className="text-gray-500 dark:text-gray-400">{c.hours}h</span>
-                          </div>
-                          <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">
-                            {(c.topics || []).join(", ")}
-                          </div>
-                          {c.youtubeQueries?.length > 0 && (
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">
-                              YT:{" "}
-                              {(c.youtubeQueries || []).slice(0, 3).join(" · ")}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </Card>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function averageForCategory(data, category) {
-  const items = (data?.extractedSkills || []).filter(
-    (s) => s.category === category
-  );
-  if (items.length === 0) return 0;
-  const prof = data?.proficiency || {};
-  let sum = 0;
-  let n = 0;
-  items.forEach((s) => {
-    const p = (prof?.[s.name] && prof?.[s.name].score) ?? 0;
-    sum += p;
-    n += 1;
-  });
-  return sum / Math.max(1, n);
-}
-
-function normalizeResult(raw) {
-  if (!raw || typeof raw !== "object") return {};
-  const out = { ...raw };
-  if (!Array.isArray(out.extractedSkills)) out.extractedSkills = [];
-  if (!out.proficiency || typeof out.proficiency !== "object")
-    out.proficiency = {};
-  if (!Array.isArray(out.skillGaps)) out.skillGaps = [];
-  if (!out.roleFit || typeof out.roleFit !== "object") out.roleFit = {};
-  if (!Array.isArray(out.learningPath)) out.learningPath = [];
-  out.summary = out.summary || "";
-  return out;
-}

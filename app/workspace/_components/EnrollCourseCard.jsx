@@ -15,9 +15,7 @@ function EnrollCourseCard({ course, enrollCourse }) {
     const totalCount = Array.isArray(course?.courseContent)
       ? course.courseContent.length
       : 0;
-
     if (!totalCount) return 0;
-
     const percent = (completedCount / totalCount) * 100;
     return Math.min(100, Math.max(0, Math.round(percent)));
   };
@@ -25,11 +23,9 @@ function EnrollCourseCard({ course, enrollCourse }) {
   const CalculateTotalDuration = () => {
     if (!courseJson?.chapters || !Array.isArray(courseJson.chapters))
       return "0 min";
-
     const totalMinutes = courseJson.chapters.reduce((total, chapter) => {
       const duration = chapter?.duration;
       if (duration && typeof duration === "string") {
-        // Extract minutes from duration string (e.g., "30 min", "1 hour", "1.5 hours")
         const match = duration.match(/(\d+(?:\.\d+)?)\s*(min|hour|hours)/i);
         if (match) {
           const value = parseFloat(match[1]);
@@ -40,76 +36,62 @@ function EnrollCourseCard({ course, enrollCourse }) {
       }
       return total;
     }, 0);
-
     if (totalMinutes >= 60) {
       const hours = Math.floor(totalMinutes / 60);
       const minutes = totalMinutes % 60;
-      if (minutes === 0) return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+      if (minutes === 0) return `${hours}h`;
       return `${hours}h ${minutes}m`;
     }
     return `${totalMinutes} min`;
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card/60 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <Image
-        src={course?.bannerImageUrl}
-        alt={course?.name}
-        width={500}
-        height={300}
-        className="w-full aspect-video rounded-t-2xl object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-      {/* Level badge overlay */}
-      <div className="absolute top-3 left-3 z-10">
-        <span className="px-2 py-1 rounded-md text-[10px] font-semibold bg-neutral-900/60 text-white backdrop-blur dark:bg-white/15 dark:text-neutral-100">
-          {course?.level || "Beginner"}
-        </span>
+    <div className="group relative bg-ev-surface-container-lowest dark:bg-ev-surface-container rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-500">
+      {/* Image with overlays */}
+      <div className="aspect-[4/3] overflow-hidden relative">
+        <Image
+          src={course?.bannerImageUrl}
+          alt={course?.name}
+          width={500}
+          height={375}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+        />
+        {/* Level badge */}
+        <div className="absolute top-4 left-4">
+          <span className="px-3 py-1 rounded-full glass-panel text-[10px] font-bold tracking-widest uppercase text-ev-on-surface-variant">
+            {course?.level || "Beginner"}
+          </span>
+        </div>
+        {/* Progress bar on image */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="w-full bg-white/20 backdrop-blur-md rounded-full h-1.5 overflow-hidden">
+            <div
+              className="bg-ev-tertiary-fixed h-full glow-tertiary rounded-full transition-all duration-700"
+              style={{ width: `${CalculatePerProgress()}%` }}
+            ></div>
+          </div>
+        </div>
       </div>
-      <div className="p-4 sm:p-5 flex flex-col gap-3">
-        <h2 className="font-semibold text-lg sm:text-xl tracking-tight text-foreground">
+
+      {/* Card body */}
+      <div className="p-6 space-y-4">
+        <h3 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors text-ev-on-surface">
           {courseJson?.name}
-        </h2>
-        <p className="line-clamp-2 text-sm text-muted-foreground">
-          {courseJson?.description}
-        </p>
-
-        <div className="grid grid-cols-3 gap-2">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="truncate">{CalculateTotalDuration()}</span>
+        </h3>
+        <div className="flex justify-between items-center text-xs text-ev-outline font-medium">
+          <div className="flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5" /> {CalculateTotalDuration()}
           </div>
-
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Book className="h-3.5 w-3.5" />
-            <span className="truncate">
-              {course?.noOfChapters || courseJson?.chapters?.length || 0}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span className="truncate capitalize">
-              {course?.level || "Beginner"}
-            </span>
+          <div className="flex items-center gap-1.5">
+            <Book className="h-3.5 w-3.5" />{" "}
+            {course?.noOfChapters || courseJson?.chapters?.length || 0} chapters
           </div>
         </div>
-
-        <div className=" ">
-          <h2 className="flex items-center justify-between text-[11px] sm:text-xs font-medium uppercase text-muted-foreground">
-            Progress
-            <span className="ml-2 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-neutral-900/5 text-foreground dark:bg-white/10 dark:text-white">
-              {CalculatePerProgress()}%
-            </span>
-          </h2>
-          <Progress className="mt-2 h-2" value={CalculatePerProgress()} />
-
-          <Link href={"/workspace/view-course/" + course?.cid}>
-            <Button className="w-full mt-3 gap-2 shadow-sm hover:shadow">
-              <PlayCircle className="h-4 w-4" />
-              Continue Learning
-            </Button>
-          </Link>
-        </div>
+        <Link href={"/workspace/view-course/" + course?.cid}>
+          <button className="w-full py-3 rounded-full bg-ev-surface-container-high dark:bg-ev-surface-container-highest text-primary font-bold text-xs uppercase tracking-widest group-hover:bg-primary group-hover:text-primary-foreground transition-all mt-2">
+            Resume Lesson
+          </button>
+        </Link>
       </div>
     </div>
   );

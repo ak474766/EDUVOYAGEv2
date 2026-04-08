@@ -2,10 +2,10 @@
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { UserDetailContext } from "./UserDetailContext";
-import { SelectedChapterIndexContext } from "./SelectedChapterIndexContext";
+import { UserDetailContext } from "../context/UserDetailContext";
+import { SelectedChapterIndexContext } from "../context/SelectedChapterIndexContext";
 
-function provider({ children }) {
+function Provider({ children }) {
   const { user } = useUser();
   const [userDetail, setUserDetail] = useState();
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
@@ -46,4 +46,4 @@ function provider({ children }) {
   );
 }
 
-export default provider;
+export default Provider;

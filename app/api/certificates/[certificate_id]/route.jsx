@@ -32,6 +32,7 @@ export async function GET(_req, context) {
         cid: certificatesTable.cid,
         courseJson: coursesTable.courseJson,
         courseName: coursesTable.name,
+        courseCreatorEmail: coursesTable.userEmail,
         userEmail: certificatesTable.userEmail,
         dbUserName: usersTable.name,
       })
@@ -51,6 +52,18 @@ export async function GET(_req, context) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
     }
 
+    let courseCreatorName = "Course Founder";
+    if (row.courseCreatorEmail) {
+      const creatorRows = await db
+        .select({ name: usersTable.name })
+        .from(usersTable)
+        .where(eq(usersTable.email, row.courseCreatorEmail))
+        .limit(1);
+      if (creatorRows?.[0]?.name) {
+        courseCreatorName = creatorRows[0].name;
+      }
+    }
+
     const derivedCourseName =
       row.courseJson?.course?.name || row.courseName || "Course";
 
@@ -64,6 +77,7 @@ export async function GET(_req, context) {
       cid: row.cid,
       courseName: derivedCourseName,
       userName: name,
+      courseCreatorName,
     });
   } catch (e) {
     console.error("GET /api/certificates/[id] error", e);

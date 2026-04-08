@@ -45,7 +45,7 @@ export async function POST(req) {
     const config = {
       responseMimeType: "text/plain",
     };
-    const model = "gemini-2.0-flash";
+    const model = "gemini-2.5-flash-lite";
 
     // Create the enhancement prompt
     const enhancementPrompt = `${CHAT_ENHANCEMENT_PROMPT}\n\nOriginal question: ${text}`;

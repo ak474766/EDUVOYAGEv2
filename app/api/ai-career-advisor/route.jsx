@@ -69,7 +69,7 @@ export async function POST(req) {
       responseMimeType: "text/plain",
     };
 
-    const model = "gemini-2.0-flash";
+
     const contents = [
       {
         role: "user",
@@ -81,13 +81,24 @@ export async function POST(req) {
       },
     ];
 
-    const response = await ai.models.generateContent({
-      model,
-      config,
-      contents,
-    });
+    let response;
+    try {
+      response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        config,
+        contents,
+      });
+    } catch (e) {
+      console.warn("Primary model failed, falling back to gemini-1.5-flash", e.message);
+      // Fallback to 1.5 flash if 2.0/2.5 quota is exhausted
+      response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-lite",
+        config,
+        contents,
+      });
+    }
 
-    const aiResponse = response?.candidates[0]?.content?.parts[0]?.text;
+    const aiResponse = response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!aiResponse) {
       return NextResponse.json(

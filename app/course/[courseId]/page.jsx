@@ -22,28 +22,18 @@ function Course() {
   const GetEnrolledCourseById = async () => {
     try {
       setLoading(true);
-      // Get course data from the courses API
       const courseResult = await axios.get("/api/courses?courseId=" + courseId);
-      console.log("Course data:", courseResult.data);
-
-      // Get enrollment data from enroll-course API
       const enrollResult = await axios.get(
         "/api/enroll-course?courseId=" + courseId
       );
-      console.log("Enrollment data:", enrollResult.data);
-
-      // Combine the data in the expected structure
       const combinedData = {
         course: courseResult.data,
-        // From innerJoin result, pick only the enrollCourse part
         enrollCourse:
           enrollResult.data?.[0]?.enrollCourse ||
           enrollResult.data?.[0]?.enrollCourseTable ||
           null,
-        courses: courseResult.data, // This contains the courseContent
+        courses: courseResult.data,
       };
-
-      console.log("Combined data:", combinedData);
       setCourseInfo(combinedData);
     } catch (error) {
       console.error("Error fetching course data:", error);
@@ -52,15 +42,13 @@ function Course() {
     }
   };
 
-  // Function to handle topic expansion from sidebar
   const handleTopicClickFromSidebar = (topicIndex) => {
     console.log("Topic clicked from sidebar in main page:", topicIndex);
-    // This will be passed to ChapterContent to expand the specific topic and scroll to it
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="min-h-screen bg-ev-surface dark:bg-[#191c1a]">
         <div className="flex items-center justify-center min-h-screen">
           <LoadingSpinner message="Loading your course content..." />
         </div>
@@ -69,14 +57,14 @@ function Course() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Fixed Header with enhanced styling */}
-      <div className="fixed top-0 left-0 right-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60 z-50 shadow-sm">
+    <div className="min-h-screen bg-ev-surface font-sans text-ev-on-surface flex flex-col">
+      {/* Fixed Header */}
+      <div className="sticky top-0 left-0 right-0 w-full z-50">
         <CourseHeader courseInfo={courseInfo} />
       </div>
 
-      {/* Main Content Area with improved spacing and layout */}
-      <div className="flex gap-0 pt-20 pb-8 min-h-screen">
+      {/* Main Content */}
+      <div className="flex flex-1 overflow-hidden relative">
         <SelectedChapterIndexContext.Provider
           value={{ selectedChapterIndex, setSelectedChapterIndex }}
         >
@@ -85,7 +73,7 @@ function Course() {
             onTopicClick={handleTopicClickFromSidebar}
             updateTrigger={updateTrigger}
           />
-          <div className="flex-1 ml-80 transition-all duration-300 ease-in-out">
+          <div className="flex-1 ml-0 md:ml-[360px] transition-all duration-300 ease-in-out p-6 md:p-10 w-full overflow-y-auto max-h-[calc(100vh-88px)]">
             <ChapterContent
               courseInfo={courseInfo}
               refreshData={() => GetEnrolledCourseById()}

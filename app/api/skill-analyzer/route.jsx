@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import { callGeminiJSON } from "../../../lib/geminiRest";
 import { safeJsonParse } from "../../../lib/gemini";
 // JS file helpers
-import { extractPdfText, extractDocxText } from "../../../lib/files";
+import {
+  extractPdfText,
+  extractDocxText,
+  extractPlainText,
+} from "../../../lib/files";
 
 const SYSTEM_PROMPT = `You are EduVoyage’s Skill Analyzer. Output strictly valid JSON only. Schema:
 {
@@ -27,8 +31,7 @@ const userPrompt = (ctx) =>
     ctx.text
   }`;
 
-async function extractTextFromUploads(req) {
-  const form = await req.formData();
+async function extractTextFromUploads(form) {
   let aggregate = "";
   for (const [key, value] of form.entries()) {
     if (value instanceof File) {
@@ -40,6 +43,8 @@ async function extractTextFromUploads(req) {
           aggregate += "\n" + (await extractPdfText(buf));
         } else if (name.endsWith(".docx")) {
           aggregate += "\n" + (await extractDocxText(buf));
+        } else if (name.endsWith(".txt")) {
+          aggregate += "\n" + extractPlainText(buf);
         }
       } catch (e) {
         // ignore and continue
@@ -56,7 +61,7 @@ export async function POST(req) {
     if (!process.env.GOOGLE_API_KEY && !process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { error: "GOOGLE_API_KEY is not set" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const contentType = req.headers.get("content-type") || "";
@@ -83,19 +88,19 @@ export async function POST(req) {
       yoe = typeof yoeRaw === "string" ? yoeRaw : undefined;
       let extracted = "";
       try {
-        extracted = await extractTextFromUploads(req);
-      } catch {
-        // ignore
+        extracted = await extractTextFromUploads(form);
+      } catch (err) {
+        console.error("Extraction error:", err);
       }
       // If both pasted text and extracted text are empty, return a clear error
       if (!textFromForm.trim() && !extracted.trim()) {
         return NextResponse.json(
           {
             error:
-              "Could not read PDF/DOCX text. Paste text or upload images instead.",
+              "Could not read PDF/DOCX/TXT text. Paste text or upload images instead.",
             hint: "Install pdf-parse/mammoth, or switch to Paste Text / Upload Image tabs.",
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
       text = [textFromForm, extracted].filter(Boolean).join("\n\n");
@@ -158,7 +163,7 @@ export async function POST(req) {
         error: error?.message || "Failed",
         hint: "Check GEMINI_API_KEY and that your model name is available. Also ensure input has at least ~10 characters.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

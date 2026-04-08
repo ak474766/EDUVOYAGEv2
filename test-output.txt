@@ -1,0 +1,6 @@
+Loading pdf-parse/lib/pdf-parse...
+Type: function
+Success! pdf-parse v1 exports a function.
+
+Loading mammoth...
+mammoth loaded, extractRawText type: function

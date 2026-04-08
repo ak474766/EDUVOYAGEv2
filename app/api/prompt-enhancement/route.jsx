@@ -19,7 +19,7 @@ output:  1.plain text formate, 2.maximum of 3 lines output. 3.don't want this **
 `;
 
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+  apiKey: process.env.GOOGLE_GEMINI_API_KEY,
 });
 
 export async function POST(req) {
@@ -39,7 +39,7 @@ export async function POST(req) {
     const config = {
       responseMimeType: "text/plain",
     };
-    const model = "gemini-2.0-flash";
+    const model = "gemini-2.5-flash-lite";
 
     // Create context-aware prompt
     const contextPrompt = context
