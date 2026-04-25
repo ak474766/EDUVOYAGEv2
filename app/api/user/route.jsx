@@ -1,10 +1,10 @@
-import { db } from "../../../config/db";
-import { usersTable } from "../../../config/schema";
-import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs/server";
+import { db as defaultDb } from "../../../config/db";
+import { usersTable as defaultUsersTable } from "../../../config/schema";
+import { eq as defaultEq } from "drizzle-orm";
+import { NextResponse as defaultNextResponse } from "next/server";
+import { currentUser as defaultCurrentUser } from "@clerk/nextjs/server";
 
-export async function POST(req) {
+export async function POST(req, { db = defaultDb, usersTable = defaultUsersTable, eq = defaultEq, NextResponse = defaultNextResponse } = {}) {
   const { email, name } = await req.json();
 
   //if user already exist?
@@ -30,7 +30,7 @@ export async function POST(req) {
 }
 
 // Get the current user's minimal profile with plan
-export async function GET() {
+export async function GET(req, { db = defaultDb, usersTable = defaultUsersTable, eq = defaultEq, NextResponse = defaultNextResponse, currentUser = defaultCurrentUser } = {}) {
   try {
     const user = await currentUser();
     if (!user || !user.primaryEmailAddress?.emailAddress) {
