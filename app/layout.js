@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "../components/ui/theme-provider";
-import Provider from "./Provider";
+import Provider from "./provider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
