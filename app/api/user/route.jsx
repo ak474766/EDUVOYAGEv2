@@ -23,7 +23,6 @@ export async function POST(req) {
       })
       .returning(usersTable);
 
-    console.log(result);
     return NextResponse.json(result);
   }
   return NextResponse.json(users[0]);
