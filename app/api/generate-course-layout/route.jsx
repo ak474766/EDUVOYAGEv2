@@ -127,7 +127,7 @@ export async function POST(req) {
 
     console.log(response.candidates[0].content.parts[0].text);
     const RawResp = response?.candidates[0]?.content?.parts[0]?.text;
-    const RawJson = RawResp.replace("```json", "").replace("```", "");
+    const RawJson = RawResp.replace(/```json|```/g, "");
     const JSONResp = JSON.parse(RawJson);
 
     const ImagePrompt = JSONResp.course?.bannerImagePrompt;
