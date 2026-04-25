@@ -1,0 +1,4 @@
+## 2025-04-25 - Removed Hardcoded NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY
+**Vulnerability:** A fallback hardcoded Google Gemini API key was used in `app/ai-tutor/page.jsx`.
+**Learning:** Hardcoded credentials exposed via version control pose a severe security risk. This occurs when developers add a fallback for development and fail to remove it before pushing to source control.
+**Prevention:** Never use hardcoded secrets or fallback values for API keys. Instead, strictly rely on environment variables (e.g. `process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY`) and instruct developers to set up a local `.env` file containing necessary keys.

@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "../../components/ui/button";
-import { GraduationCap, Mic, MicOff, Loader2, ArrowLeft, Waveform, Sparkles, AlertCircle } from "lucide-react";
+import { GraduationCap, Mic, MicOff, Loader2, ArrowLeft, Sparkles, AlertCircle } from "lucide-react";
+import { Activity as Waveform } from "lucide-react";
 import Link from "next/link";
 import { GoogleGenAI, Modality } from "@google/genai";
 import { toast } from "sonner";
@@ -25,7 +26,7 @@ export default function AITutor() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY || "AIzaSyDaEBCsoZM0mO51Srz7Ej9yC-EJEH42Foc";
+    const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY;
 
     // Audio Playback Logic
     const playNextAudio = async () => {
