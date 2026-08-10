@@ -198,7 +198,7 @@ function AddNewCourseDialog({ children }) {
         <div className="px-6 py-5">
           <div className="flex flex-col gap-4 mt-1">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <label htmlFor="course-name" className="text-sm font-medium text-foreground flex items-center gap-2">
                 <svg className="hidden" aria-hidden="true" />
                 <span>Course Name</span>
               </label>
@@ -207,6 +207,7 @@ function AddNewCourseDialog({ children }) {
                   <svg className="h-4 w-4 opacity-80" aria-hidden="true" />
                 </span>
                 <Input
+                  id="course-name"
                   className="pl-9 h-10 rounded-md"
                   placeholder="Course Name"
                   value={formData.name}
@@ -222,7 +223,7 @@ function AddNewCourseDialog({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <label htmlFor="course-description" className="text-sm font-medium text-foreground flex items-center gap-2">
                 <span>Course Description (Optional)</span>
                 <button
                   type="button"
@@ -242,6 +243,7 @@ function AddNewCourseDialog({ children }) {
               </label>
               <div className="relative">
                 <Textarea
+                  id="course-description"
                   className="min-h-[80px] max-h-[200px] resize-none rounded-md"
                   placeholder="Course Description"
                   value={formData.description}
@@ -262,7 +264,7 @@ function AddNewCourseDialog({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <label htmlFor="course-chapters" className="text-sm font-medium text-foreground flex items-center gap-2">
                 <span>No. of Chapters</span>
               </label>
               <div className="relative">
@@ -270,6 +272,7 @@ function AddNewCourseDialog({ children }) {
                   <svg className="h-4 w-4 opacity-80" aria-hidden="true" />
                 </span>
                 <Input
+                  id="course-chapters"
                   className="pl-9 h-10 rounded-md"
                   placeholder="No. of Chapters"
                   type="number"
@@ -294,11 +297,12 @@ function AddNewCourseDialog({ children }) {
                 px-3 py-2 transition-colors
               "
             >
-              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <label htmlFor="course-include-video" className="text-sm font-medium text-foreground flex items-center gap-2">
                 <span>Include Video</span>
               </label>
               <div className="flex items-center gap-2">
                 <Switch
+                  id="course-include-video"
                   onCheckedChange={() =>
                     onHandleInputChange("includeVideo", !formData?.includeVideo)
                   }
@@ -307,14 +311,14 @@ function AddNewCourseDialog({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <label htmlFor="course-level" className="text-sm font-medium text-foreground flex items-center gap-2">
                 <span>Difficulty Level</span>
               </label>
               <Select
                 className="mt-1"
                 onValueChange={(value) => onHandleInputChange("level", value)}
               >
-                <SelectTrigger className="w-[200px] h-10 rounded-md focus:ring-2 focus:ring-ring">
+                <SelectTrigger id="course-level" className="w-[200px] h-10 rounded-md focus:ring-2 focus:ring-ring">
                   <SelectValue placeholder="Select level" />
                 </SelectTrigger>
                 <SelectContent>
@@ -326,7 +330,7 @@ function AddNewCourseDialog({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground flex items-center gap-2">
+              <label htmlFor="course-category" className="text-sm font-medium text-foreground flex items-center gap-2">
                 <span>Category</span>
               </label>
               <div className="relative">
@@ -334,6 +338,7 @@ function AddNewCourseDialog({ children }) {
                   <svg className="h-4 w-4 opacity-80" aria-hidden="true" />
                 </span>
                 <Input
+                  id="course-category"
                   className="pl-9 h-10 rounded-md"
                   placeholder="Category (comma separated)"
                   value={formData.catagory}

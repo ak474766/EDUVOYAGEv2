@@ -1,0 +1,3 @@
+## 2026-04-25 - Explicit Label Association in Dialogs
+**Learning:** Screen readers often struggle to associate text labels with inputs inside complex components like dialogs/modals unless explicit `htmlFor` and `id` properties are defined. Wrapping inputs or having them next to `label` components isn't always enough in custom Dialog frameworks.
+**Action:** Always ensure that `<label>` components have an explicit `htmlFor` attribute that strictly matches the `id` of the interactive element (`<Input>`, `<Textarea>`, `<Switch>`, etc.), especially within modal or dialog components where context context might be lost to assistive tech.
